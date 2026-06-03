@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audio Folder Player UI Mock</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --phone-bg: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --bar: #d1d5db;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --shadow: 0 20px 45px rgba(15, 23, 42, 0.18);
+      --radius-phone: 34px;
+      --radius-card: 18px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #eef2ff, #f8fafc);
+      color: var(--text);
+      font-family: var(--font);
+    }
+
+    .page {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 32px 20px 48px;
+    }
+
+    .header {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .mock-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 360px;
+      min-height: 720px;
+      margin: 0 auto;
+      border: 10px solid #111827;
+      border-radius: var(--radius-phone);
+      background: var(--phone-bg);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 122px;
+      height: 28px;
+      transform: translateX(-50%);
+      background: #111827;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
+      z-index: 10;
+    }
+
+    .screen {
+      min-height: 700px;
+      padding: 44px 18px 22px;
+      background: #fff;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 22px;
+    }
+
+    .nav-title {
+      font-size: 20px;
+      font-weight: 750;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-action {
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .section-title {
+      margin: 18px 0 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius-card);
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    }
+
+    .folder-card {
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .folder-icon {
+      width: 46px;
+      height: 36px;
+      margin-bottom: 12px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #60a5fa, #2563eb);
+      position: relative;
+    }
+
+    .folder-icon::before {
+      content: "";
+      position: absolute;
+      top: -7px;
+      left: 3px;
+      width: 22px;
+      height: 10px;
+      border-top-left-radius: 6px;
+      border-top-right-radius: 6px;
+      background: #93c5fd;
+    }
+
+    .folder-name {
+      font-size: 17px;
+      font-weight: 750;
+      margin-bottom: 4px;
+    }
+
+    .folder-meta {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      border-radius: 14px;
+      border: 0;
+      background: var(--primary);
+      color: white;
+      font-weight: 750;
+      text-decoration: none;
+      margin-top: 14px;
+    }
+
+    .button.secondary {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .sync-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+
+    .sync-row:last-child {
+      border-bottom: 0;
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: var(--success);
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    .file-list {
+      padding-bottom: 98px;
+    }
+
+    .file-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .file-row:last-child {
+      border-bottom: 0;
+    }
+
+    .file-title {
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    .file-title.unplayed {
+      font-weight: 800;
+    }
+
+    .file-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .file-progress {
+      height: 5px;
+      margin-top: 8px;
+      border-radius: 999px;
+      background: var(--bar);
+      overflow: hidden;
+    }
+
+    .file-progress > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: var(--primary);
+    }
+
+    .badge {
+      align-self: start;
+      padding: 4px 8px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .badge.playing {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .mini-player {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 12px 18px 18px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(14px);
+    }
+
+    .mini-title {
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 750;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mini-controls {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .round-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #f3f4f6;
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .play-btn {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: #fff;
+      font-size: 22px;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.3);
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .player-hero {
+      margin: 24px auto 24px;
+      width: 190px;
+      height: 190px;
+      border-radius: 36px;
+      background:
+        radial-gradient(circle at 30% 25%, rgba(255,255,255,0.55), transparent 35%),
+        linear-gradient(135deg, #60a5fa, #1d4ed8);
+      box-shadow: 0 18px 35px rgba(37, 99, 235, 0.25);
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 58px;
+    }
+
+    .now-title {
+      text-align: center;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 7px;
+    }
+
+    .now-sub {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 28px;
+    }
+
+    .big-progress {
+      height: 7px;
+      border-radius: 999px;
+      background: var(--bar);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .big-progress > span {
+      display: block;
+      height: 100%;
+      width: 62%;
+      border-radius: inherit;
+      background: var(--primary);
+    }
+
+    .big-controls {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: 62px 72px 62px;
+      gap: 24px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .big-round {
+      width: 62px;
+      height: 62px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: #f3f4f6;
+      font-weight: 800;
+    }
+
+    .big-play {
+      width: 72px;
+      height: 72px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--primary);
+      color: white;
+      font-size: 30px;
+      box-shadow: 0 14px 28px rgba(37, 99, 235, 0.35);
+    }
+
+    .speed-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .speed {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f3f4f6;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .speed.active {
+      background: var(--primary-soft);
+      color: var(--primary);
+    }
+
+    .note {
+      margin-top: 24px;
+      padding: 16px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    code {
+      padding: 2px 5px;
+      border-radius: 6px;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
+    @media (max-width: 980px) {
+      .mock-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .phone {
+        max-width: 380px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="header">
+      <h1>Audio Folder Player UI Mock</h1>
+      <p>GoodReaderライクな「フォルダ取り込み + ファイル一覧 + 下部プレイヤー」の静的HTMLモック</p>
+    </header>
+
+    <section class="mock-grid" aria-label="UI mock screens">
+      <article class="phone" aria-label="Folder selection screen">
+        <div class="notch"></div>
+        <div class="screen">
+          <nav class="nav">
+            <div class="nav-title">フォルダ</div>
+            <div class="nav-action">設定</div>
+          </nav>
+
+          <div class="section-title">前回の取り込み元</div>
+          <div class="card folder-card">
+            <div class="folder-icon" aria-hidden="true"></div>
+            <div class="folder-name">iCloud Drive / AudioBooks</div>
+            <div class="folder-meta">
+              18ファイル・2.4GB<br>
+              最終同期: 今日 06:18
+            </div>
+            <a class="button" href="#">再同期</a>
+            <a class="button secondary" href="#">別フォルダを選択</a>
+          </div>
+
+          <div class="section-title">同期状態</div>
+          <div class="card" style="padding: 0 16px;">
+            <div class="sync-row">
+              <span><span class="status-dot"></span>再生位置</span>
+              <strong>同期済み</strong>
+            </div>
+            <div class="sync-row">
+              <span><span class="status-dot"></span>未再生状態</span>
+              <strong>同期済み</strong>
+            </div>
+            <div class="sync-row">
+              <span>ローカル容量</span>
+              <strong>2.4GB使用中</strong>
+            </div>
+          </div>
+
+          <div class="note">
+            フォルダ再指定時は、<code>全削除して再取り込み</code> または
+            <code>既存を残して上書き</code> を選択する想定。
+          </div>
+        </div>
+      </article>
+
+      <article class="phone" aria-label="Audio file list screen">
+        <div class="notch"></div>
+        <div class="screen">
+          <nav class="nav">
+            <div class="nav-title">AudioBooks</div>
+            <div class="nav-action">同期</div>
+          </nav>
+
+          <div class="section-title">ファイル一覧</div>
+          <div class="file-list">
+            <div class="file-row">
+              <div>
+                <div class="file-title">AWS設計入門 01.mp3</div>
+                <div class="file-sub">完了・1:05:22</div>
+                <div class="file-progress"><span style="width: 100%;"></span></div>
+              </div>
+              <div class="badge">100%</div>
+            </div>
+
+            <div class="file-row">
+              <div>
+                <div class="file-title">AWS設計入門 02.mp3</div>
+                <div class="file-sub">途中・41:12 / 1:12:40</div>
+                <div class="file-progress"><span style="width: 57%;"></span></div>
+              </div>
+              <div class="badge playing">再生中</div>
+            </div>
+
+            <div class="file-row">
+              <div>
+                <div class="file-title unplayed">AWS設計入門 03.mp3</div>
+                <div class="file-sub">未再生・1:18:09</div>
+                <div class="file-progress"><span style="width: 0%;"></span></div>
+              </div>
+              <div class="badge">未再生</div>
+            </div>
+
+            <div class="file-row">
+              <div>
+                <div class="file-title unplayed">RSSクローラー設計 01.mp3</div>
+                <div class="file-sub">未再生・52:44</div>
+                <div class="file-progress"><span style="width: 0%;"></span></div>
+              </div>
+              <div class="badge">未再生</div>
+            </div>
+
+            <div class="file-row">
+              <div>
+                <div class="file-title unplayed">RSSクローラー設計 02.mp3</div>
+                <div class="file-sub">未再生・48:31</div>
+                <div class="file-progress"><span style="width: 0%;"></span></div>
+              </div>
+              <div class="badge">未再生</div>
+            </div>
+          </div>
+
+          <div class="mini-player" aria-label="Mini player">
+            <div class="mini-title">AWS設計入門 02.mp3</div>
+            <div class="file-progress"><span style="width: 57%;"></span></div>
+            <div class="time-row">
+              <span>41:12</span>
+              <span>1:12:40</span>
+            </div>
+            <div class="mini-controls" style="margin-top: 10px;">
+              <div class="round-btn">-10</div>
+              <div class="play-btn">▶</div>
+              <div class="round-btn">+30</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="phone" aria-label="Now playing screen">
+        <div class="notch"></div>
+        <div class="screen">
+          <nav class="nav">
+            <div class="nav-action">戻る</div>
+            <div class="nav-title">再生中</div>
+            <div class="nav-action">未再生</div>
+          </nav>
+
+          <div class="player-hero" aria-hidden="true">▶</div>
+
+          <div class="now-title">AWS設計入門 02.mp3</div>
+          <div class="now-sub">AudioBooks・途中再生</div>
+
+          <div class="big-progress"><span></span></div>
+          <div class="time-row">
+            <span>41:12</span>
+            <span>1:12:40</span>
+          </div>
+
+          <div class="big-controls">
+            <div class="big-round">-10</div>
+            <div class="big-play">▶</div>
+            <div class="big-round">+30</div>
+          </div>
+
+          <div class="speed-row" aria-label="Playback speed">
+            <div class="speed">1.0x</div>
+            <div class="speed active">1.25x</div>
+            <div class="speed">1.5x</div>
+            <div class="speed">2.0x</div>
+          </div>
+
+          <div class="note">
+            ロック画面・コントロールセンター操作に対応する想定。
+            停止、曲送り、未再生化、バックグラウンド移行時に再生状態を同期する。
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+</body>
+</html>
