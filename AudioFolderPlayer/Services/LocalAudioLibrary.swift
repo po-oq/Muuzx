@@ -14,14 +14,19 @@ struct LocalAudioLibrary {
     func loadItems() throws -> [AudioItem] {
         let urls = try fileManager.contentsOfDirectory(
             at: directory,
-            includingPropertiesForKeys: [.fileSizeKey],
+            includingPropertiesForKeys: [.isRegularFileKey, .fileSizeKey],
             options: [.skipsHiddenFiles]
         )
 
         let items = try urls
             .filter { Self.supportedExtensions.contains($0.pathExtension.lowercased()) }
-            .map { url -> AudioItem in
-                let size = Int64(try url.resourceValues(forKeys: [.fileSizeKey]).fileSize ?? 0)
+            .compactMap { url -> AudioItem? in
+                let values = try url.resourceValues(forKeys: [.isRegularFileKey, .fileSizeKey])
+                guard values.isRegularFile == true, let fileSize = values.fileSize else {
+                    return nil
+                }
+
+                let size = Int64(fileSize)
                 let name = url.lastPathComponent
                 return AudioItem(
                     id: FileIdentifier.make(fileName: name, sizeBytes: size),

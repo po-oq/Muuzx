@@ -19,6 +19,13 @@ final class LocalAudioLibraryTests: XCTestCase {
         try data.write(to: tempDir.appendingPathComponent(name))
     }
 
+    private func mkdir(_ name: String) throws {
+        try FileManager.default.createDirectory(
+            at: tempDir.appendingPathComponent(name, isDirectory: true),
+            withIntermediateDirectories: true
+        )
+    }
+
     func test_loadItems_returnsOnlySupportedExtensions() throws {
         try write("a.mp3", bytes: 10)
         try write("b.m4a", bytes: 10)
@@ -49,5 +56,14 @@ final class LocalAudioLibraryTests: XCTestCase {
         XCTAssertEqual(items[0].fileSizeBytes, 1234)
         XCTAssertEqual(items[0].id, "song.mp3|1234")
         XCTAssertEqual(items[0].status, .unplayed)
+    }
+
+    func test_loadItems_ignoresDirectoriesWithSupportedExtensions() throws {
+        try mkdir("folder.mp3")
+        try write("song.mp3", bytes: 10)
+
+        let items = try LocalAudioLibrary(directory: tempDir).loadItems()
+
+        XCTAssertEqual(items.map(\.fileName), ["song.mp3"])
     }
 }
