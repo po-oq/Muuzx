@@ -10,7 +10,9 @@
 		162FC2BCF547920E2613C5AE /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40AEF5D9D4A723DFA164087 /* AudioItem.swift */; };
 		3A46C7F5EC31DC3A15AF9D9F /* AudioFolderPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502289D96DEBC3733358978D /* AudioFolderPlayerTests.swift */; };
 		C37B2A752FADBFBE9B9964D2 /* PlaybackStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194489E2A96E35B9AB0ED2D /* PlaybackStatus.swift */; };
+		D07DB02043CF89AA7C107072 /* FileIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC06F238995E4D7E9E1C03FC /* FileIdentifierTests.swift */; };
 		D39399FF8E0EF1CBC5629C02 /* AudioFolderPlayerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A4541ABB6958231637AC958 /* AudioFolderPlayerApp.swift */; };
+		DEDD71A427D1C39EA2E42C73 /* FileIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90A2B5A1DE77C988008FE7E /* FileIdentifier.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -29,6 +31,8 @@
 		5194489E2A96E35B9AB0ED2D /* PlaybackStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackStatus.swift; sourceTree = "<group>"; };
 		8A4541ABB6958231637AC958 /* AudioFolderPlayerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFolderPlayerApp.swift; sourceTree = "<group>"; };
 		D40AEF5D9D4A723DFA164087 /* AudioItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioItem.swift; sourceTree = "<group>"; };
+		D90A2B5A1DE77C988008FE7E /* FileIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIdentifier.swift; sourceTree = "<group>"; };
+		DC06F238995E4D7E9E1C03FC /* FileIdentifierTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileIdentifierTests.swift; sourceTree = "<group>"; };
 		DCA81AD305D202E25F343700 /* AudioFolderPlayerTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AudioFolderPlayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -55,6 +59,7 @@
 			isa = PBXGroup;
 			children = (
 				502289D96DEBC3733358978D /* AudioFolderPlayerTests.swift */,
+				DC06F238995E4D7E9E1C03FC /* FileIdentifierTests.swift */,
 			);
 			path = AudioFolderPlayerTests;
 			sourceTree = "<group>";
@@ -76,16 +81,25 @@
 			path = App;
 			sourceTree = "<group>";
 		};
+		9494B59C1F1D6B3D8E91C974 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				D90A2B5A1DE77C988008FE7E /* FileIdentifier.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
 		F73817DFD5F6E5DB0471F933 /* AudioFolderPlayer */ = {
 			isa = PBXGroup;
 			children = (
 				5A41B875640409DA73E4CDE1 /* App */,
 				5883FB6C70DCED279EF34FFD /* Models */,
+				9494B59C1F1D6B3D8E91C974 /* Services */,
 			);
 			path = AudioFolderPlayer;
 			sourceTree = "<group>";
 		};
-		"TEMP_A31EF477-0E56-4392-8E93-D76CF6DCBAC3" /* Infrastructure */ = {
+		"TEMP_F74E53B1-3506-44F3-A5DA-84D898628B57" /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
 			);
@@ -167,6 +181,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A46C7F5EC31DC3A15AF9D9F /* AudioFolderPlayerTests.swift in Sources */,
+				D07DB02043CF89AA7C107072 /* FileIdentifierTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -176,6 +191,7 @@
 			files = (
 				D39399FF8E0EF1CBC5629C02 /* AudioFolderPlayerApp.swift in Sources */,
 				162FC2BCF547920E2613C5AE /* AudioItem.swift in Sources */,
+				DEDD71A427D1C39EA2E42C73 /* FileIdentifier.swift in Sources */,
 				C37B2A752FADBFBE9B9964D2 /* PlaybackStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
