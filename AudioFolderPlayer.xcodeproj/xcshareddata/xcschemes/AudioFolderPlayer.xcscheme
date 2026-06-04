@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1640"
+   LastUpgradeVersion = "1430"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "YES"
+      runPostActionsOnFailure = "NO">
       <BuildActionEntries>
          <BuildActionEntry
             buildForTesting = "YES"
@@ -14,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B0A0A0A1A0A0A0A0A0A0A001"
+               BlueprintIdentifier = "6A931F0A253A1C27B6D91F5B"
                BuildableName = "AudioFolderPlayer.app"
                BlueprintName = "AudioFolderPlayer"
                ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
@@ -27,20 +28,31 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
-      shouldAutocreateTestPlan = "YES">
+      onlyGenerateCoverageForSpecifiedTargets = "NO">
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "6A931F0A253A1C27B6D91F5B"
+            BuildableName = "AudioFolderPlayer.app"
+            BlueprintName = "AudioFolderPlayer"
+            ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
       <Testables>
          <TestableReference
             skipped = "NO"
-            parallelizable = "YES">
+            parallelizable = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "B0A0A0A2A0A0A0A0A0A0A001"
+               BlueprintIdentifier = "A4671ECA90E5BFD57C2E48E9"
                BuildableName = "AudioFolderPlayerTests.xctest"
                BlueprintName = "AudioFolderPlayerTests"
                ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -56,12 +68,14 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B0A0A0A1A0A0A0A0A0A0A001"
+            BlueprintIdentifier = "6A931F0A253A1C27B6D91F5B"
             BuildableName = "AudioFolderPlayer.app"
             BlueprintName = "AudioFolderPlayer"
             ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -73,12 +87,14 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "B0A0A0A1A0A0A0A0A0A0A001"
+            BlueprintIdentifier = "6A931F0A253A1C27B6D91F5B"
             BuildableName = "AudioFolderPlayer.app"
             BlueprintName = "AudioFolderPlayer"
             ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
