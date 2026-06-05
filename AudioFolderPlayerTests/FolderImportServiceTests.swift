@@ -88,6 +88,28 @@ final class FolderImportServiceTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: audioDir.appendingPathComponent("new.mp3").path))
     }
 
+    func test_replaceAll_whenSourceIsDestination_preservesFilesAndReturnsExistingItems() throws {
+        try write("track 10.mp3", bytes: 10, in: audioDir)
+        try write("track 2.m4a", bytes: 20, in: audioDir)
+        try write("notes.txt", bytes: 30, in: audioDir)
+        let sameDirectory = audioDir.appendingPathComponent(".", isDirectory: true)
+        var progress: [FolderImportProgress] = []
+        let service = FolderImportService(destinationDirectory: audioDir)
+
+        let result = try service.importFolder(sameDirectory, mode: .replaceAll) { progress.append($0) }
+
+        XCTAssertEqual(result.items.map(\.fileName), ["track 2.m4a", "track 10.mp3"])
+        XCTAssertEqual(progress.map(\.completedFiles), [1, 2])
+        XCTAssertEqual(progress.map(\.totalFiles), [2, 2])
+        XCTAssertEqual(progress.map(\.currentFileName), ["track 2.m4a", "track 10.mp3"])
+        XCTAssertEqual(result.summary.folderName, "Audio")
+        XCTAssertEqual(result.summary.fileCount, 2)
+        XCTAssertEqual(result.summary.totalBytes, 30)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: audioDir.appendingPathComponent("track 2.m4a").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: audioDir.appendingPathComponent("track 10.mp3").path))
+        XCTAssertTrue(FileManager.default.fileExists(atPath: audioDir.appendingPathComponent("notes.txt").path))
+    }
+
     func test_mergeOverwrite_keepsLocalOnlyFilesAndOverwritesSameName() throws {
         try write("local-only.mp3", bytes: 9, in: audioDir)
         try write("same.mp3", bytes: 5, in: audioDir)
@@ -99,6 +121,20 @@ final class FolderImportServiceTests: XCTestCase {
         let sameSize = try fileSize(at: audioDir.appendingPathComponent("same.mp3"))
         XCTAssertEqual(sameSize, 22)
         XCTAssertTrue(FileManager.default.fileExists(atPath: audioDir.appendingPathComponent("local-only.mp3").path))
+    }
+
+    func test_mergeOverwrite_whenSourceIsDestination_preservesFilesAndReturnsExistingItems() throws {
+        try write("same.mp3", bytes: 22, in: audioDir)
+        let sameDirectory = audioDir.appendingPathComponent(".", isDirectory: true)
+        let service = FolderImportService(destinationDirectory: audioDir)
+
+        let result = try service.importFolder(sameDirectory, mode: .mergeOverwrite)
+
+        XCTAssertEqual(result.items.map(\.fileName), ["same.mp3"])
+        XCTAssertEqual(result.summary.folderName, "Audio")
+        XCTAssertEqual(result.summary.fileCount, 1)
+        XCTAssertEqual(result.summary.totalBytes, 22)
+        XCTAssertEqual(try fileSize(at: audioDir.appendingPathComponent("same.mp3")), 22)
     }
 
     private func fileSize(at url: URL) throws -> Int64 {

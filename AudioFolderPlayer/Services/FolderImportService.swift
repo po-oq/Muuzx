@@ -35,6 +35,14 @@ struct FolderImportService {
             throw FolderImportError.noSupportedAudioFiles
         }
 
+        if sameDirectory(sourceDirectory, destinationDirectory) {
+            return try importedResult(
+                sourceDirectory: sourceDirectory,
+                sourceFiles: sourceFiles,
+                progress: progress
+            )
+        }
+
         try prepareDestination(for: mode)
 
         var completed = 0
@@ -56,11 +64,31 @@ struct FolderImportService {
             ))
         }
 
+        return try importedResult(
+            sourceDirectory: sourceDirectory,
+            sourceFiles: sourceFiles,
+            progress: { _ in }
+        )
+    }
+
+    private func importedResult(
+        sourceDirectory: URL,
+        sourceFiles: [URL],
+        progress: (FolderImportProgress) -> Void
+    ) throws -> FolderImportResult {
+        for (index, sourceURL) in sourceFiles.enumerated() {
+            progress(FolderImportProgress(
+                completedFiles: index + 1,
+                totalFiles: sourceFiles.count,
+                currentFileName: sourceURL.lastPathComponent
+            ))
+        }
+
         let items = try LocalAudioLibrary(directory: destinationDirectory, fileManager: fileManager).loadItems()
         let importedNames = Set(sourceFiles.map(\.lastPathComponent))
         let importedItems = items.filter { importedNames.contains($0.fileName) }
         let summary = FolderImportSummary(
-            folderName: sourceDirectory.lastPathComponent,
+            folderName: sourceDirectory.standardizedFileURL.lastPathComponent,
             fileCount: importedItems.count,
             totalBytes: importedItems.reduce(Int64(0)) { $0 + $1.fileSizeBytes },
             importedAt: Date()
@@ -84,6 +112,14 @@ struct FolderImportService {
             .sorted {
                 $0.lastPathComponent.localizedStandardCompare($1.lastPathComponent) == .orderedAscending
             }
+    }
+
+    private func sameDirectory(_ lhs: URL, _ rhs: URL) -> Bool {
+        canonicalPath(for: lhs) == canonicalPath(for: rhs)
+    }
+
+    private func canonicalPath(for url: URL) -> String {
+        url.standardizedFileURL.resolvingSymlinksInPath().path
     }
 
     private func prepareDestination(for mode: ImportMode) throws {
