@@ -12,6 +12,7 @@ groups:
   - AudioFolderPlayer/ViewModels
   - AudioFolderPlayer/Services
   - AudioFolderPlayer/Infrastructure/Audio
+  - AudioFolderPlayer/Infrastructure/DocumentPicker
   - AudioFolderPlayer/Infrastructure/FileSystem
   - AudioFolderPlayer/Resources
   - AudioFolderPlayerTests

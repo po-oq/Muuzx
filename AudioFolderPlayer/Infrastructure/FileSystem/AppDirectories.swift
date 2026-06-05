@@ -10,12 +10,28 @@ enum AppDirectories {
             appropriateFor: nil,
             create: true
         )
-        return base.appendingPathComponent(appFolderName, isDirectory: true)
+        let url = base.appendingPathComponent(appFolderName, isDirectory: true)
+        try fm.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
     }
 
     static func audioDirectory(_ fm: FileManager = .default) throws -> URL {
         let url = try appSupportRoot(fm).appendingPathComponent("audio", isDirectory: true)
         try fm.createDirectory(at: url, withIntermediateDirectories: true)
         return url
+    }
+
+    static func stateDirectory(_ fm: FileManager = .default) throws -> URL {
+        let url = try appSupportRoot(fm).appendingPathComponent("state", isDirectory: true)
+        try fm.createDirectory(at: url, withIntermediateDirectories: true)
+        return url
+    }
+
+    static func folderImportSummaryFile(_ fm: FileManager = .default) throws -> URL {
+        try stateDirectory(fm).appendingPathComponent("folder-import-summary.json")
+    }
+
+    static func folderBookmarkFile(_ fm: FileManager = .default) throws -> URL {
+        try stateDirectory(fm).appendingPathComponent("folder-bookmark.data")
     }
 }
