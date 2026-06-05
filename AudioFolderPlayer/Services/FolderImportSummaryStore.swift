@@ -1,6 +1,11 @@
 import Foundation
 
-struct FolderImportSummaryStore {
+protocol FolderImportSummaryStoring {
+    func load() throws -> FolderImportSummary?
+    func save(_ summary: FolderImportSummary) throws
+}
+
+struct FolderImportSummaryStore: FolderImportSummaryStoring {
     let fileURL: URL
     private let fileManager: FileManager
     private let encoder: JSONEncoder

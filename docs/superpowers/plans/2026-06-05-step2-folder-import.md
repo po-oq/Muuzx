@@ -692,7 +692,7 @@ git commit -m "feat: add folder bookmark store"
 - Create: `AudioFolderPlayer/ViewModels/FolderViewModel.swift`
 - Test: `AudioFolderPlayerTests/FolderViewModelTests.swift`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `AudioFolderPlayerTests/FolderViewModelTests.swift` を作成する。
 
@@ -812,7 +812,7 @@ private final class FakeFolderImportSummaryStoring: FolderImportSummaryStoring {
 }
 ```
 
-- [ ] **Step 2: テストが失敗することを確認**
+- [x] **Step 2: テストが失敗することを確認**
 
 Run:
 
@@ -823,7 +823,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `FolderViewModel` または `FolderImporting` 未定義で FAIL
 
-- [ ] **Step 3: Protocol を既存サービスへ追加**
+- [x] **Step 3: Protocol を既存サービスへ追加**
 
 `AudioFolderPlayer/Services/FolderImportService.swift` の先頭付近に protocol を追加し、`FolderImportService` を適合させる。
 
@@ -858,7 +858,7 @@ protocol FolderImportSummaryStoring {
 struct FolderImportSummaryStore: FolderImportSummaryStoring {
 ```
 
-- [ ] **Step 4: FolderViewModel を実装**
+- [x] **Step 4: FolderViewModel を実装**
 
 `AudioFolderPlayer/ViewModels/FolderViewModel.swift` を作成する。
 
@@ -918,7 +918,7 @@ final class FolderViewModel: ObservableObject {
 }
 ```
 
-- [ ] **Step 5: テストが通ることを確認**
+- [x] **Step 5: テストが通ることを確認**
 
 Run:
 
@@ -929,7 +929,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `Executed 3 tests, with 0 failures`
 
-- [ ] **Step 6: 関連テストも確認**
+- [x] **Step 6: 関連テストも確認**
 
 Run:
 
@@ -939,7 +939,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: importer/store tests が PASS
 
-- [ ] **Step 7: コミット**
+- [x] **Step 7: コミット**
 
 ```bash
 git add AudioFolderPlayer/ViewModels/FolderViewModel.swift AudioFolderPlayer/Services/FolderImportService.swift AudioFolderPlayer/Services/FolderImportSummaryStore.swift AudioFolderPlayerTests/FolderViewModelTests.swift
