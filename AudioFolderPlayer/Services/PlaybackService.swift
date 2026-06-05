@@ -21,7 +21,22 @@ final class PlaybackService {
         return items[i]
     }
 
-    func setItems(_ items: [AudioItem]) { self.items = items }
+    func setItems(_ items: [AudioItem]) {
+        guard let currentItem else {
+            self.items = items
+            currentIndex = nil
+            return
+        }
+
+        self.items = items
+        if let newIndex = items.firstIndex(where: { $0.id == currentItem.id }) {
+            currentIndex = newIndex
+        } else {
+            currentIndex = nil
+            engine.pause()
+            onCurrentItemChanged?(nil)
+        }
+    }
 
     func play(at index: Int) {
         guard items.indices.contains(index) else { return }

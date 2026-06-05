@@ -82,4 +82,40 @@ final class PlaybackServiceTests: XCTestCase {
 
         XCTAssertNil(service.currentIndex)
     }
+
+    func test_setItems_whenCurrentItemIsRemoved_stopsAndClearsCurrentItem() throws {
+        let engine = FakeAudioEngine()
+        let first = makeItem("a.mp3")
+        let second = makeItem("b.mp3")
+        let service = PlaybackService(engine: engine, items: [first, second])
+        var changedItems: [AudioItem?] = []
+        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.play(at: 1)
+
+        service.setItems([first])
+
+        XCTAssertNil(service.currentIndex)
+        XCTAssertNil(service.currentItem)
+        XCTAssertFalse(engine.isPlaying)
+        XCTAssertEqual(changedItems.count, 2)
+        XCTAssertNil(try XCTUnwrap(changedItems.last))
+    }
+
+    func test_setItems_whenCurrentItemStillExists_updatesCurrentIndexToNewPosition() {
+        let engine = FakeAudioEngine()
+        let first = makeItem("a.mp3")
+        let second = makeItem("b.mp3")
+        let service = PlaybackService(engine: engine, items: [first, second])
+        var changedItems: [AudioItem?] = []
+        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.play(at: 1)
+
+        service.setItems([second, first])
+
+        XCTAssertEqual(service.currentIndex, 0)
+        XCTAssertEqual(service.currentItem, second)
+        XCTAssertTrue(engine.isPlaying)
+        XCTAssertEqual(changedItems.count, 1)
+        XCTAssertEqual(changedItems.compactMap(\.?.id), [second.id])
+    }
 }
