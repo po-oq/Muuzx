@@ -296,7 +296,7 @@ git commit -m "feat: add folder import summary store"
 - Create: `AudioFolderPlayer/Services/FolderImportService.swift`
 - Test: `AudioFolderPlayerTests/FolderImportServiceTests.swift`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `AudioFolderPlayerTests/FolderImportServiceTests.swift` を作成する。
 
@@ -382,7 +382,7 @@ final class FolderImportServiceTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: テストが失敗することを確認**
+- [x] **Step 2: テストが失敗することを確認**
 
 Run:
 
@@ -393,7 +393,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `FolderImportService` 未定義で FAIL
 
-- [ ] **Step 3: 進捗とエラー型を作成**
+- [x] **Step 3: 進捗とエラー型を作成**
 
 `AudioFolderPlayer/Services/FolderImportProgress.swift` を作成する。
 
@@ -430,7 +430,7 @@ enum FolderImportError: LocalizedError, Equatable {
 }
 ```
 
-- [ ] **Step 4: FolderImportService を実装**
+- [x] **Step 4: FolderImportService を実装**
 
 `AudioFolderPlayer/Services/FolderImportService.swift` を作成する。
 
@@ -542,7 +542,7 @@ struct FolderImportService {
 }
 ```
 
-- [ ] **Step 5: テストが通ることを確認**
+- [x] **Step 5: テストが通ることを確認**
 
 Run:
 
@@ -553,7 +553,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `Executed 4 tests, with 0 failures`
 
-- [ ] **Step 6: コミット**
+- [x] **Step 6: コミット**
 
 ```bash
 git add AudioFolderPlayer/Services/FolderImportProgress.swift AudioFolderPlayer/Services/FolderImportError.swift AudioFolderPlayer/Services/FolderImportService.swift AudioFolderPlayerTests/FolderImportServiceTests.swift
