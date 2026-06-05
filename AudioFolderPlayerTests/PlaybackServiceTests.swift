@@ -54,4 +54,32 @@ final class PlaybackServiceTests: XCTestCase {
 
         XCTAssertEqual(engine.seekedToSec.last, 0)
     }
+
+    func test_playbackEnded_advancesToNextTrack() {
+        let engine = FakeAudioEngine()
+        let service = PlaybackService(
+            engine: engine,
+            items: [makeItem("a.mp3"), makeItem("b.mp3")]
+        )
+        service.play(at: 0)
+
+        engine.simulatePlaybackEnded()
+
+        XCTAssertEqual(service.currentIndex, 1)
+        XCTAssertEqual(engine.loadedURLs.last, URL(fileURLWithPath: "/tmp/b.mp3"))
+        XCTAssertTrue(engine.isPlaying)
+    }
+
+    func test_playbackEnded_onLastTrack_stops() {
+        let engine = FakeAudioEngine()
+        let service = PlaybackService(
+            engine: engine,
+            items: [makeItem("a.mp3"), makeItem("b.mp3")]
+        )
+        service.play(at: 1)
+
+        engine.simulatePlaybackEnded()
+
+        XCTAssertNil(service.currentIndex)
+    }
 }

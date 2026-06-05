@@ -42,6 +42,12 @@ final class PlaybackService {
     }
 
     private func handlePlaybackEnded() {
-        // Task 6 で実装
+        guard let i = currentIndex else { return }
+        let next = i + 1
+        if items.indices.contains(next) {
+            play(at: next)
+        } else {
+            currentIndex = nil
+        }
     }
 }
