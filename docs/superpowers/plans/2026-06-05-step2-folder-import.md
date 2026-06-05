@@ -387,6 +387,7 @@ final class FolderImportServiceTests: XCTestCase {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderImportServiceTests
 ```
 
@@ -546,6 +547,7 @@ struct FolderImportService {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderImportServiceTests
 ```
 
@@ -611,6 +613,7 @@ final class FolderBookmarkStoreTests: XCTestCase {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderBookmarkStoreTests
 ```
 
@@ -668,6 +671,7 @@ struct FolderBookmarkStore {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderBookmarkStoreTests
 ```
 
@@ -813,6 +817,7 @@ private final class FakeFolderImportSummaryStoring: FolderImportSummaryStoring {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderViewModelTests
 ```
 
@@ -918,6 +923,7 @@ final class FolderViewModel: ObservableObject {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerTests/FolderViewModelTests
 ```
 
@@ -1130,6 +1136,7 @@ struct FolderView: View {
 Run:
 
 ```bash
+xcodegen generate
 xcodebuild build -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData
 ```
 
