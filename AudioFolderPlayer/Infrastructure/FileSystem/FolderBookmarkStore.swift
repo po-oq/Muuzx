@@ -41,7 +41,7 @@ struct FolderBookmarkStore {
         var isStale = false
         let url = try URL(
             resolvingBookmarkData: data,
-            options: [],
+            options: [.withoutImplicitStartAccessing],
             relativeTo: nil,
             bookmarkDataIsStale: &isStale
         )
