@@ -11,6 +11,7 @@
 		121D91223C2A5631F5FFFB12 /* AppDirectoriesAndSampleSeederTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71670FC041748293C1FF0186 /* AppDirectoriesAndSampleSeederTests.swift */; };
 		162FC2BCF547920E2613C5AE /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40AEF5D9D4A723DFA164087 /* AudioItem.swift */; };
 		1AFB6B8198638A5B4F8746B5 /* PlaybackServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEFA50FADC2A269A06DFD87 /* PlaybackServiceTests.swift */; };
+		1F9589BE5A160819A216584A /* FolderBookmarkStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5DEA3D89134CC85A49ED930A /* FolderBookmarkStore.swift */; };
 		2311DACCADCFD206DA9226F4 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80E088B9433421DC271A0C06 /* AudioEngine.swift */; };
 		35A664492DA22498EE75546E /* FolderImportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F802B0F207103598082B1AD1 /* FolderImportService.swift */; };
 		373D3D5CDDD3694262BE042F /* AudioListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA694B645B2BBF60C9A9B17A /* AudioListView.swift */; };
@@ -38,6 +39,7 @@
 		DEDD71A427D1C39EA2E42C73 /* FileIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90A2B5A1DE77C988008FE7E /* FileIdentifier.swift */; };
 		E12D0153F3FCB7B58A37FCAE /* FolderImportServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5B9CF4215F5CE1C12A02CA2 /* FolderImportServiceTests.swift */; };
 		F2A2AFE445F6607D40FFF0C3 /* LocalAudioLibraryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1578DD8415DE843A81FE5471 /* LocalAudioLibraryTests.swift */; };
+		F874697CCB46597B52EFC53D /* FolderBookmarkStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBDBA2224F84C44385D1759A /* FolderBookmarkStoreTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,6 +74,7 @@
 		5194489E2A96E35B9AB0ED2D /* PlaybackStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackStatus.swift; sourceTree = "<group>"; };
 		553093D03E3BB17C4DE81A5B /* FolderImportSummaryStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderImportSummaryStore.swift; sourceTree = "<group>"; };
 		555231F48AD95A369D9E6942 /* SampleSeeder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleSeeder.swift; sourceTree = "<group>"; };
+		5DEA3D89134CC85A49ED930A /* FolderBookmarkStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderBookmarkStore.swift; sourceTree = "<group>"; };
 		71670FC041748293C1FF0186 /* AppDirectoriesAndSampleSeederTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDirectoriesAndSampleSeederTests.swift; sourceTree = "<group>"; };
 		80E088B9433421DC271A0C06 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
 		88AA21D45E31E8E6D850FC6B /* AudioFolderPlayerUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = AudioFolderPlayerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -80,6 +83,7 @@
 		A7DB8B68A99F9AF4265FF6E9 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackService.swift; sourceTree = "<group>"; };
 		AA694B645B2BBF60C9A9B17A /* AudioListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioListView.swift; sourceTree = "<group>"; };
 		B5B9CF4215F5CE1C12A02CA2 /* FolderImportServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderImportServiceTests.swift; sourceTree = "<group>"; };
+		BBDBA2224F84C44385D1759A /* FolderBookmarkStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FolderBookmarkStoreTests.swift; sourceTree = "<group>"; };
 		BD8F1DEB7FDEDDA6411F1C69 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		BDEFA50FADC2A269A06DFD87 /* PlaybackServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackServiceTests.swift; sourceTree = "<group>"; };
 		C8950A0D7F6423E0648B76AC /* LocalAudioLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioLibrary.swift; sourceTree = "<group>"; };
@@ -140,6 +144,7 @@
 				502289D96DEBC3733358978D /* AudioFolderPlayerTests.swift */,
 				D1D05FB3AA1BBCEC110CE577 /* AudioListViewModelTests.swift */,
 				DC06F238995E4D7E9E1C03FC /* FileIdentifierTests.swift */,
+				BBDBA2224F84C44385D1759A /* FolderBookmarkStoreTests.swift */,
 				B5B9CF4215F5CE1C12A02CA2 /* FolderImportServiceTests.swift */,
 				00AC34D100FE3BCD93EC2FAD /* FolderImportSummaryStoreTests.swift */,
 				1578DD8415DE843A81FE5471 /* LocalAudioLibraryTests.swift */,
@@ -179,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				0D74AA88510EDF644B027E63 /* AppDirectories.swift */,
+				5DEA3D89134CC85A49ED930A /* FolderBookmarkStore.swift */,
 			);
 			path = FileSystem;
 			sourceTree = "<group>";
@@ -369,6 +375,7 @@
 				7D0FB22AB5C363ABB8D2C06C /* AudioListViewModelTests.swift in Sources */,
 				4C52AE2DE0890E5AECC3AA2E /* FakeAudioEngine.swift in Sources */,
 				D07DB02043CF89AA7C107072 /* FileIdentifierTests.swift in Sources */,
+				F874697CCB46597B52EFC53D /* FolderBookmarkStoreTests.swift in Sources */,
 				E12D0153F3FCB7B58A37FCAE /* FolderImportServiceTests.swift in Sources */,
 				B50157671636156230CE72CF /* FolderImportSummaryStoreTests.swift in Sources */,
 				F2A2AFE445F6607D40FFF0C3 /* LocalAudioLibraryTests.swift in Sources */,
@@ -388,6 +395,7 @@
 				373D3D5CDDD3694262BE042F /* AudioListView.swift in Sources */,
 				38947ACB8E70D400219E1C4E /* AudioListViewModel.swift in Sources */,
 				DEDD71A427D1C39EA2E42C73 /* FileIdentifier.swift in Sources */,
+				1F9589BE5A160819A216584A /* FolderBookmarkStore.swift in Sources */,
 				5123BA5616D4F15D03DCAD88 /* FolderImportError.swift in Sources */,
 				90CBDB9D72FA3CE7AAE85D2D /* FolderImportProgress.swift in Sources */,
 				35A664492DA22498EE75546E /* FolderImportService.swift in Sources */,

@@ -568,7 +568,7 @@ git commit -m "feat: add folder import service"
 - Create: `AudioFolderPlayer/Infrastructure/FileSystem/FolderBookmarkStore.swift`
 - Test: `AudioFolderPlayerTests/FolderBookmarkStoreTests.swift`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `AudioFolderPlayerTests/FolderBookmarkStoreTests.swift` を作成する。
 
@@ -608,7 +608,7 @@ final class FolderBookmarkStoreTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: テストが失敗することを確認**
+- [x] **Step 2: テストが失敗することを確認**
 
 Run:
 
@@ -619,7 +619,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `FolderBookmarkStore` 未定義で FAIL
 
-- [ ] **Step 3: FolderBookmarkStore を実装**
+- [x] **Step 3: FolderBookmarkStore を実装**
 
 `AudioFolderPlayer/Infrastructure/FileSystem/FolderBookmarkStore.swift` を作成する。
 
@@ -666,7 +666,7 @@ struct FolderBookmarkStore {
 }
 ```
 
-- [ ] **Step 4: テストが通ることを確認**
+- [x] **Step 4: テストが通ることを確認**
 
 Run:
 
@@ -677,7 +677,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `Executed 2 tests, with 0 failures`
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add AudioFolderPlayer/Infrastructure/FileSystem/FolderBookmarkStore.swift AudioFolderPlayerTests/FolderBookmarkStoreTests.swift
