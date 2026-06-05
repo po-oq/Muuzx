@@ -31,6 +31,9 @@ final class FolderViewModel: ObservableObject {
     }
 
     func importFolder(_ url: URL, mode: ImportMode = .replaceAll) async {
+        guard !isImporting else {
+            return
+        }
         isImporting = true
         errorMessage = nil
         progress = nil

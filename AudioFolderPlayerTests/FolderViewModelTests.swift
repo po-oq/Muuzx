@@ -83,6 +83,51 @@ final class FolderViewModelTests: XCTestCase {
         XCTAssertEqual(importer.importedOnMainThread, false)
     }
 
+    func test_importFolder_ignoresSecondCallWhileImportIsRunning() async {
+        let expectedSummary = makeSummary(folderName: "Imported")
+        let importer = BlockingFolderImporter(result: FolderImportResult(items: [], summary: expectedSummary))
+        let store = FakeFolderImportSummaryStore()
+        var reloadCount = 0
+        let viewModel = FolderViewModel(
+            importer: importer,
+            summaryStore: store,
+            reloadAudioList: { reloadCount += 1 }
+        )
+
+        let firstImport = Task {
+            await viewModel.importFolder(sourceURL)
+        }
+        defer {
+            importer.finishFirstImport()
+        }
+
+        let firstImportStarted = await Task.detached {
+            importer.waitUntilFirstImportStarts(timeout: 2)
+        }.value
+        guard firstImportStarted else {
+            XCTFail("First import did not start")
+            return
+        }
+        XCTAssertTrue(viewModel.isImporting)
+
+        await viewModel.importFolder(URL(fileURLWithPath: "/tmp/SecondSource", isDirectory: true), mode: .mergeOverwrite)
+
+        XCTAssertEqual(importer.callCount, 1)
+        XCTAssertTrue(viewModel.isImporting)
+        XCTAssertNil(viewModel.summary)
+        XCTAssertTrue(store.savedSummaries.isEmpty)
+        XCTAssertEqual(reloadCount, 0)
+
+        importer.finishFirstImport()
+        await firstImport.value
+
+        XCTAssertFalse(viewModel.isImporting)
+        XCTAssertEqual(viewModel.summary, expectedSummary)
+        XCTAssertNil(viewModel.errorMessage)
+        XCTAssertEqual(store.savedSummaries, [expectedSummary])
+        XCTAssertEqual(reloadCount, 1)
+    }
+
     private func makeSummary(folderName: String) -> FolderImportSummary {
         FolderImportSummary(
             folderName: folderName,
@@ -90,6 +135,48 @@ final class FolderViewModelTests: XCTestCase {
             totalBytes: 1234,
             importedAt: Date(timeIntervalSince1970: 1_800_000_000)
         )
+    }
+}
+
+private final class BlockingFolderImporter: FolderImporting, @unchecked Sendable {
+    private let result: FolderImportResult
+    private let firstImportStarted = DispatchSemaphore(value: 0)
+    private let finishFirstImportSemaphore = DispatchSemaphore(value: 0)
+    private let lock = NSLock()
+    private var storedCallCount = 0
+
+    var callCount: Int {
+        lock.withLock { storedCallCount }
+    }
+
+    init(result: FolderImportResult) {
+        self.result = result
+    }
+
+    func importFolder(
+        _ sourceDirectory: URL,
+        mode: ImportMode,
+        progress: (FolderImportProgress) -> Void
+    ) throws -> FolderImportResult {
+        let invocation = lock.withLock {
+            storedCallCount += 1
+            return storedCallCount
+        }
+
+        if invocation == 1 {
+            firstImportStarted.signal()
+            finishFirstImportSemaphore.wait()
+        }
+
+        return result
+    }
+
+    func waitUntilFirstImportStarts(timeout: TimeInterval) -> Bool {
+        firstImportStarted.wait(timeout: .now() + timeout) == .success
+    }
+
+    func finishFirstImport() {
+        finishFirstImportSemaphore.signal()
     }
 }
 
