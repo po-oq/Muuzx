@@ -1,1 +1,5 @@
 *:Zone.Identifier
+.DS_Store
+build/
+xcuserdata/
+*.xcuserstate
