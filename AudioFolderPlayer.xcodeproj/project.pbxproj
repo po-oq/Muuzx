@@ -11,6 +11,7 @@
 		162FC2BCF547920E2613C5AE /* AudioItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40AEF5D9D4A723DFA164087 /* AudioItem.swift */; };
 		1AFB6B8198638A5B4F8746B5 /* PlaybackServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDEFA50FADC2A269A06DFD87 /* PlaybackServiceTests.swift */; };
 		2311DACCADCFD206DA9226F4 /* AudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80E088B9433421DC271A0C06 /* AudioEngine.swift */; };
+		373D3D5CDDD3694262BE042F /* AudioListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA694B645B2BBF60C9A9B17A /* AudioListView.swift */; };
 		38947ACB8E70D400219E1C4E /* AudioListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3912DC04929E964DA72ED86 /* AudioListViewModel.swift */; };
 		3A46C7F5EC31DC3A15AF9D9F /* AudioFolderPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502289D96DEBC3733358978D /* AudioFolderPlayerTests.swift */; };
 		489B7887B7A09BA4E6A6BDFA /* SampleSeeder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 555231F48AD95A369D9E6942 /* SampleSeeder.swift */; };
@@ -21,6 +22,7 @@
 		79DD7D663478101F54D4E641 /* sample-01.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 272FF778A36DC4D708609D6D /* sample-01.mp3 */; };
 		7D0FB22AB5C363ABB8D2C06C /* AudioListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D05FB3AA1BBCEC110CE577 /* AudioListViewModelTests.swift */; };
 		91EC10C6EEC05768E58B8DA1 /* sample-02.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 021813419E600C4F6E680969 /* sample-02.mp3 */; };
+		A42234EF3549D1F387E6E8D2 /* MiniPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8F1DEB7FDEDDA6411F1C69 /* MiniPlayerView.swift */; };
 		B81ACED08273E0B62E0F96C9 /* AVPlayerAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4645169D474D1062701CAF94 /* AVPlayerAudioEngine.swift */; };
 		C37B2A752FADBFBE9B9964D2 /* PlaybackStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5194489E2A96E35B9AB0ED2D /* PlaybackStatus.swift */; };
 		D07DB02043CF89AA7C107072 /* FileIdentifierTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC06F238995E4D7E9E1C03FC /* FileIdentifierTests.swift */; };
@@ -53,6 +55,8 @@
 		80E088B9433421DC271A0C06 /* AudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngine.swift; sourceTree = "<group>"; };
 		8A4541ABB6958231637AC958 /* AudioFolderPlayerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFolderPlayerApp.swift; sourceTree = "<group>"; };
 		A7DB8B68A99F9AF4265FF6E9 /* PlaybackService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackService.swift; sourceTree = "<group>"; };
+		AA694B645B2BBF60C9A9B17A /* AudioListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioListView.swift; sourceTree = "<group>"; };
+		BD8F1DEB7FDEDDA6411F1C69 /* MiniPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MiniPlayerView.swift; sourceTree = "<group>"; };
 		BDEFA50FADC2A269A06DFD87 /* PlaybackServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaybackServiceTests.swift; sourceTree = "<group>"; };
 		C8950A0D7F6423E0648B76AC /* LocalAudioLibrary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalAudioLibrary.swift; sourceTree = "<group>"; };
 		D1D05FB3AA1BBCEC110CE577 /* AudioListViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioListViewModelTests.swift; sourceTree = "<group>"; };
@@ -151,6 +155,15 @@
 			path = Services;
 			sourceTree = "<group>";
 		};
+		9620B9FB58D56536EF9F13E6 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				AA694B645B2BBF60C9A9B17A /* AudioListView.swift */,
+				BD8F1DEB7FDEDDA6411F1C69 /* MiniPlayerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		A1EA312AB39216D66B707374 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -185,6 +198,7 @@
 				A1EA312AB39216D66B707374 /* Resources */,
 				9494B59C1F1D6B3D8E91C974 /* Services */,
 				537F457BE5F8C81C5BE4FEE2 /* ViewModels */,
+				9620B9FB58D56536EF9F13E6 /* Views */,
 			);
 			path = AudioFolderPlayer;
 			sourceTree = "<group>";
@@ -295,9 +309,11 @@
 				2311DACCADCFD206DA9226F4 /* AudioEngine.swift in Sources */,
 				D39399FF8E0EF1CBC5629C02 /* AudioFolderPlayerApp.swift in Sources */,
 				162FC2BCF547920E2613C5AE /* AudioItem.swift in Sources */,
+				373D3D5CDDD3694262BE042F /* AudioListView.swift in Sources */,
 				38947ACB8E70D400219E1C4E /* AudioListViewModel.swift in Sources */,
 				DEDD71A427D1C39EA2E42C73 /* FileIdentifier.swift in Sources */,
 				6CF4DA3E4E613909EE4EA7B8 /* LocalAudioLibrary.swift in Sources */,
+				A42234EF3549D1F387E6E8D2 /* MiniPlayerView.swift in Sources */,
 				5ECA584BD913894CE57C397B /* PlaybackService.swift in Sources */,
 				C37B2A752FADBFBE9B9964D2 /* PlaybackStatus.swift in Sources */,
 				489B7887B7A09BA4E6A6BDFA /* SampleSeeder.swift in Sources */,
