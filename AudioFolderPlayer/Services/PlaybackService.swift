@@ -4,6 +4,8 @@ final class PlaybackService {
     static let skipForwardSec: Double = 30
     static let skipBackwardSec: Double = 10
 
+    var onCurrentItemChanged: ((AudioItem?) -> Void)?
+
     private let engine: AudioEngine
     private(set) var items: [AudioItem]
     private(set) var currentIndex: Int?
@@ -26,6 +28,7 @@ final class PlaybackService {
         currentIndex = index
         engine.load(url: items[index].localURL)
         engine.play()
+        onCurrentItemChanged?(items[index])
     }
 
     func resume() { engine.play() }
@@ -48,6 +51,7 @@ final class PlaybackService {
             play(at: next)
         } else {
             currentIndex = nil
+            onCurrentItemChanged?(nil)
         }
     }
 }

@@ -13,11 +13,19 @@ final class AudioListViewModel: ObservableObject {
     init(library: LocalAudioLibrary, playback: PlaybackService) {
         self.library = library
         self.playback = playback
+        self.playback.onCurrentItemChanged = { [weak self] item in
+            Task { @MainActor [weak self] in
+                self?.updateCurrentItem(item)
+            }
+        }
     }
 
     func load() {
         items = (try? library.loadItems()) ?? []
         playback.setItems(items)
+        if let currentItemId, !items.contains(where: { $0.id == currentItemId }) {
+            updateCurrentItem(nil)
+        }
     }
 
     func play(_ item: AudioItem) {
@@ -42,5 +50,10 @@ final class AudioListViewModel: ObservableObject {
 
     var currentItem: AudioItem? {
         items.first { $0.id == currentItemId }
+    }
+
+    private func updateCurrentItem(_ item: AudioItem?) {
+        currentItemId = item?.id
+        isPlaying = item != nil
     }
 }
