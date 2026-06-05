@@ -15,9 +15,11 @@ struct AudioListView: View {
                         Spacer()
                         if item.id == viewModel.currentItemId {
                             Image(systemName: "speaker.wave.2.fill")
+                                .accessibilityIdentifier("current-item-speaker")
                         }
                     }
                 }
+                .accessibilityIdentifier("audio-row-\(item.fileName)")
             }
             MiniPlayerView(viewModel: viewModel)
         }

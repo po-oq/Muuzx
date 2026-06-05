@@ -15,6 +15,7 @@ groups:
   - AudioFolderPlayer/Infrastructure/FileSystem
   - AudioFolderPlayer/Resources
   - AudioFolderPlayerTests
+  - AudioFolderPlayerUITests
 settings:
   base:
     SWIFT_VERSION: "5.0"
@@ -53,6 +54,19 @@ targets:
         GENERATE_INFOPLIST_FILE: YES
         TEST_HOST: "$(BUILT_PRODUCTS_DIR)/AudioFolderPlayer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AudioFolderPlayer"
         BUNDLE_LOADER: "$(TEST_HOST)"
+  AudioFolderPlayerUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - path: AudioFolderPlayerUITests
+    dependencies:
+      - target: AudioFolderPlayer
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.pooq.AudioFolderPlayerUITests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_TARGET_NAME: AudioFolderPlayer
 schemes:
   AudioFolderPlayer:
     build:
@@ -64,6 +78,7 @@ schemes:
       config: Debug
       targets:
         - AudioFolderPlayerTests
+        - AudioFolderPlayerUITests
     profile:
       config: Release
     analyze:

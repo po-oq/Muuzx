@@ -8,16 +8,20 @@ struct MiniPlayerView: View {
             Text(viewModel.currentItem?.fileName ?? "再生していません")
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityIdentifier("mini-player-title")
 
             Button(action: viewModel.skipBackward) {
                 Image(systemName: "gobackward.10")
             }
+            .accessibilityIdentifier("skip-backward-button")
             Button(action: viewModel.togglePlayPause) {
                 Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
             }
+            .accessibilityIdentifier("play-pause-button")
             Button(action: viewModel.skipForward) {
                 Image(systemName: "goforward.30")
             }
+            .accessibilityIdentifier("skip-forward-button")
         }
         .padding()
         .background(.thinMaterial)

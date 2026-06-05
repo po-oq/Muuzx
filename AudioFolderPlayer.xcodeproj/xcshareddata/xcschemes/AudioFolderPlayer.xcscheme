@@ -50,6 +50,17 @@
                ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "2613CD58C9428D10A7B2F762"
+               BuildableName = "AudioFolderPlayerUITests.xctest"
+               BlueprintName = "AudioFolderPlayerUITests"
+               ReferencedContainer = "container:AudioFolderPlayer.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
       <CommandLineArguments>
       </CommandLineArguments>
