@@ -1,6 +1,6 @@
 import Foundation
 
-struct FolderImportSummary: Codable, Equatable {
+struct FolderImportSummary: Codable, Equatable, Sendable {
     var folderName: String
     var fileCount: Int
     var totalBytes: Int64

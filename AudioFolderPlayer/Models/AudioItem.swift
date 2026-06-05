@@ -1,6 +1,6 @@
 import Foundation
 
-struct AudioItem: Identifiable, Codable, Equatable {
+struct AudioItem: Identifiable, Codable, Equatable, Sendable {
     let id: String          // fileId: normalizedName|sizeBytes
     var fileName: String
     var localURL: URL

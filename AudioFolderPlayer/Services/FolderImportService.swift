@@ -1,6 +1,6 @@
 import Foundation
 
-protocol FolderImporting {
+protocol FolderImporting: Sendable {
     func importFolder(
         _ sourceDirectory: URL,
         mode: ImportMode,
@@ -8,12 +8,12 @@ protocol FolderImporting {
     ) throws -> FolderImportResult
 }
 
-struct FolderImportResult: Equatable {
+struct FolderImportResult: Equatable, Sendable {
     var items: [AudioItem]
     var summary: FolderImportSummary
 }
 
-struct FolderImportService: FolderImporting {
+struct FolderImportService: FolderImporting, @unchecked Sendable {
     let destinationDirectory: URL
     private let fileManager: FileManager
 

@@ -40,11 +40,24 @@ final class FolderViewModel: ObservableObject {
         }
 
         do {
-            try bookmarkStore?.saveBookmark(for: url)
-            let result = try importer.importFolder(url, mode: mode) { [weak self] progress in
-                self?.progress = progress
+            let importer = importer
+            let summaryStore = summaryStore
+            let bookmarkStore = bookmarkStore
+            let reportProgress: @Sendable (FolderImportProgress) -> Void = { [weak self] progress in
+                let semaphore = DispatchSemaphore(value: 0)
+                Task { @MainActor in
+                    self?.progress = progress
+                    semaphore.signal()
+                }
+                semaphore.wait()
             }
-            try summaryStore.save(result.summary)
+
+            let result = try await Task.detached(priority: .userInitiated) {
+                try bookmarkStore?.saveBookmark(for: url)
+                let result = try importer.importFolder(url, mode: mode, progress: reportProgress)
+                try summaryStore.save(result.summary)
+                return result
+            }.value
             summary = result.summary
             reloadAudioList()
         } catch {

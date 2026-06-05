@@ -1,6 +1,6 @@
 import Foundation
 
-struct FolderBookmarkStore {
+struct FolderBookmarkStore: @unchecked Sendable {
     let fileURL: URL
     private let fileManager: FileManager
 

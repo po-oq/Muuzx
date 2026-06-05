@@ -1,6 +1,6 @@
 import Foundation
 
-enum ImportMode: Equatable {
+enum ImportMode: Equatable, Sendable {
     case replaceAll
     case mergeOverwrite
 }

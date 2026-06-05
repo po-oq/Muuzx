@@ -71,6 +71,18 @@ final class FolderViewModelTests: XCTestCase {
         XCTAssertEqual(reloadCount, 0)
     }
 
+    func test_importFolder_runsBlockingImporterOffMainThread() async {
+        let importer = FakeFolderImporter()
+        let viewModel = FolderViewModel(
+            importer: importer,
+            summaryStore: FakeFolderImportSummaryStore()
+        )
+
+        await viewModel.importFolder(sourceURL)
+
+        XCTAssertEqual(importer.importedOnMainThread, false)
+    }
+
     private func makeSummary(folderName: String) -> FolderImportSummary {
         FolderImportSummary(
             folderName: folderName,
@@ -81,12 +93,13 @@ final class FolderViewModelTests: XCTestCase {
     }
 }
 
-private final class FakeFolderImporter: FolderImporting {
+private final class FakeFolderImporter: FolderImporting, @unchecked Sendable {
     var result: FolderImportResult
     var error: Error?
     var progressToReport: FolderImportProgress?
     private(set) var importedSourceDirectory: URL?
     private(set) var importedMode: ImportMode?
+    private(set) var importedOnMainThread: Bool?
 
     init(
         result: FolderImportResult = FolderImportResult(
@@ -111,6 +124,7 @@ private final class FakeFolderImporter: FolderImporting {
     ) throws -> FolderImportResult {
         importedSourceDirectory = sourceDirectory
         importedMode = mode
+        importedOnMainThread = Thread.isMainThread
         if let progressToReport {
             progress(progressToReport)
         }
@@ -121,7 +135,7 @@ private final class FakeFolderImporter: FolderImporting {
     }
 }
 
-private final class FakeFolderImportSummaryStore: FolderImportSummaryStoring {
+private final class FakeFolderImportSummaryStore: FolderImportSummaryStoring, @unchecked Sendable {
     var summary: FolderImportSummary?
     private(set) var loadCallCount = 0
     private(set) var savedSummaries: [FolderImportSummary] = []
