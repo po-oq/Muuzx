@@ -54,7 +54,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 - Modify: `AudioFolderPlayer/Infrastructure/FileSystem/AppDirectories.swift`
 - Modify: `project.yml`
 
-- [ ] **Step 1: `AppDirectories` に state/bookmark 保存先を追加**
+- [x] **Step 1: `AppDirectories` に state/bookmark 保存先を追加**
 
 `AudioFolderPlayer/Infrastructure/FileSystem/AppDirectories.swift` を以下に置き換える。
 
@@ -98,7 +98,7 @@ enum AppDirectories {
 }
 ```
 
-- [ ] **Step 2: `project.yml` に DocumentPicker group を追加**
+- [x] **Step 2: `project.yml` に DocumentPicker group を追加**
 
 `groups:` に以下を追加する。
 
@@ -106,7 +106,7 @@ enum AppDirectories {
   - AudioFolderPlayer/Infrastructure/DocumentPicker
 ```
 
-- [ ] **Step 3: Xcode project を再生成**
+- [x] **Step 3: Xcode project を再生成**
 
 Run:
 
@@ -116,7 +116,7 @@ xcodegen generate
 
 Expected: `Created project at .../AudioFolderPlayer.xcodeproj`
 
-- [ ] **Step 4: ビルド確認**
+- [x] **Step 4: ビルド確認**
 
 Run:
 
@@ -126,7 +126,7 @@ xcodebuild build -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,
 
 Expected: `BUILD SUCCEEDED`
 
-- [ ] **Step 5: コミット**
+- [x] **Step 5: コミット**
 
 ```bash
 git add AudioFolderPlayer/Infrastructure/FileSystem/AppDirectories.swift project.yml AudioFolderPlayer.xcodeproj
@@ -143,7 +143,7 @@ git commit -m "chore: add folder import storage paths"
 - Create: `AudioFolderPlayer/Services/FolderImportSummaryStore.swift`
 - Test: `AudioFolderPlayerTests/FolderImportSummaryStoreTests.swift`
 
-- [ ] **Step 1: 失敗するテストを書く**
+- [x] **Step 1: 失敗するテストを書く**
 
 `AudioFolderPlayerTests/FolderImportSummaryStoreTests.swift` を作成する。
 
@@ -189,7 +189,7 @@ final class FolderImportSummaryStoreTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: テストが失敗することを確認**
+- [x] **Step 2: テストが失敗することを確認**
 
 Run:
 
@@ -199,7 +199,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `FolderImportSummaryStore` または `FolderImportSummary` 未定義で FAIL
 
-- [ ] **Step 3: モデルを作成**
+- [x] **Step 3: モデルを作成**
 
 `AudioFolderPlayer/Models/ImportMode.swift` を作成する。
 
@@ -225,7 +225,7 @@ struct FolderImportSummary: Codable, Equatable {
 }
 ```
 
-- [ ] **Step 4: SummaryStore を実装**
+- [x] **Step 4: SummaryStore を実装**
 
 `AudioFolderPlayer/Services/FolderImportSummaryStore.swift` を作成する。
 
@@ -269,7 +269,7 @@ struct FolderImportSummaryStore {
 }
 ```
 
-- [ ] **Step 5: テストが通ることを確認**
+- [x] **Step 5: テストが通ることを確認**
 
 Run:
 
@@ -279,7 +279,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `Executed 2 tests, with 0 failures`
 
-- [ ] **Step 6: コミット**
+- [x] **Step 6: コミット**
 
 ```bash
 git add AudioFolderPlayer/Models/ImportMode.swift AudioFolderPlayer/Models/FolderImportSummary.swift AudioFolderPlayer/Services/FolderImportSummaryStore.swift AudioFolderPlayerTests/FolderImportSummaryStoreTests.swift
