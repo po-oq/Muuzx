@@ -23,6 +23,29 @@ final class AppDirectoriesAndSampleSeederTests: XCTestCase {
         XCTAssertTrue(fm.fileExists(atPath: url.path))
     }
 
+    func test_stateDirectoryCreatesStateFolderUnderAppSupportRoot() throws {
+        let fm = FileManager.default
+        let url = try AppDirectories.stateDirectory(fm)
+
+        XCTAssertEqual(url.lastPathComponent, "state")
+        XCTAssertEqual(url.deletingLastPathComponent().lastPathComponent, AppDirectories.appFolderName)
+        XCTAssertTrue(fm.fileExists(atPath: url.path))
+    }
+
+    func test_folderImportSummaryFileIsUnderStateDirectory() throws {
+        let url = try AppDirectories.folderImportSummaryFile()
+
+        XCTAssertEqual(url.lastPathComponent, "folder-import-summary.json")
+        XCTAssertEqual(url.deletingLastPathComponent().lastPathComponent, "state")
+    }
+
+    func test_folderBookmarkFileIsUnderStateDirectory() throws {
+        let url = try AppDirectories.folderBookmarkFile()
+
+        XCTAssertEqual(url.lastPathComponent, "folder-bookmark.data")
+        XCTAssertEqual(url.deletingLastPathComponent().lastPathComponent, "state")
+    }
+
     func test_seedIfEmptyCopiesBundledAudioFilesOnlyWhenDestinationIsEmpty() throws {
         let bundleURL = tempDir.appendingPathComponent("Samples.bundle", isDirectory: true)
         try FileManager.default.createDirectory(at: bundleURL, withIntermediateDirectories: true)
