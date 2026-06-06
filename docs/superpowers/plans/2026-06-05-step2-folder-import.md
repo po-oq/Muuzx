@@ -1156,7 +1156,7 @@ git commit -m "feat: add folder import UI"
 **Files:**
 - Modify: `AudioFolderPlayer/App/AudioFolderPlayerApp.swift`
 
-- [ ] **Step 1: App エントリを置き換える**
+- [x] **Step 1: App エントリを置き換える**
 
 `AudioFolderPlayer/App/AudioFolderPlayerApp.swift` を以下に置き換える。
 
@@ -1214,7 +1214,7 @@ struct AudioFolderPlayerApp: App {
 }
 ```
 
-- [ ] **Step 2: ビルド確認**
+- [x] **Step 2: ビルド確認**
 
 Run:
 
@@ -1224,7 +1224,7 @@ xcodebuild build -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,
 
 Expected: `BUILD SUCCEEDED`
 
-- [ ] **Step 3: 全テスト確認**
+- [x] **Step 3: 全テスト確認**
 
 Run:
 
@@ -1234,7 +1234,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: 全 unit/UI tests が PASS
 
-- [ ] **Step 4: コミット**
+- [x] **Step 4: コミット**
 
 ```bash
 git add AudioFolderPlayer/App/AudioFolderPlayerApp.swift
