@@ -15,14 +15,16 @@ final class AudioListViewModelTests: XCTestCase {
         try? FileManager.default.removeItem(at: tempDir)
     }
 
-    private func makeViewModel() throws -> (AudioListViewModel, FakeAudioEngine) {
+    private func makeViewModel(
+        metadata: any AudioMetadataLoading = FakeAudioMetadataLoader(durations: [:])
+    ) throws -> (AudioListViewModel, FakeAudioEngine) {
         try write("01 first.mp3", bytes: 10)
         try write("02 second.mp3", bytes: 20)
 
         let engine = FakeAudioEngine()
         let library = LocalAudioLibrary(directory: tempDir)
         let playback = PlaybackService(engine: engine)
-        let viewModel = AudioListViewModel(library: library, playback: playback)
+        let viewModel = AudioListViewModel(library: library, playback: playback, metadata: metadata)
         viewModel.load()
 
         return (viewModel, engine)
@@ -37,6 +39,18 @@ final class AudioListViewModelTests: XCTestCase {
         for _ in 0..<10 where !condition() {
             await Task.yield()
         }
+    }
+
+    func test_load_updatesDurationAsynchronously() async throws {
+        let metadata = FakeAudioMetadataLoader(durations: ["01 first.mp3": 125])
+        let (viewModel, _) = try makeViewModel(metadata: metadata)
+
+        XCTAssertEqual(viewModel.items.first?.durationSec, 0)
+
+        await waitForState { viewModel.items.first?.durationSec == 125 }
+
+        XCTAssertEqual(viewModel.items.first?.durationSec, 125)
+        XCTAssertEqual(viewModel.items.dropFirst().first?.durationSec, 0)
     }
 
     func test_playbackEnded_advancesCurrentItemAndKeepsPlaying() async throws {
