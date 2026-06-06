@@ -954,7 +954,7 @@ git commit -m "feat: add FolderViewModel"
 - Create: `AudioFolderPlayer/Infrastructure/DocumentPicker/FolderPicker.swift`
 - Create: `AudioFolderPlayer/Views/FolderView.swift`
 
-- [ ] **Step 1: FolderPicker を作成**
+- [x] **Step 1: FolderPicker を作成**
 
 `AudioFolderPlayer/Infrastructure/DocumentPicker/FolderPicker.swift` を作成する。
 
@@ -1003,7 +1003,7 @@ struct FolderPicker: UIViewControllerRepresentable {
 }
 ```
 
-- [ ] **Step 2: FolderView を作成**
+- [x] **Step 2: FolderView を作成**
 
 `AudioFolderPlayer/Views/FolderView.swift` を作成する。
 
@@ -1131,7 +1131,7 @@ struct FolderView: View {
 }
 ```
 
-- [ ] **Step 3: ビルド確認**
+- [x] **Step 3: ビルド確認**
 
 Run:
 
@@ -1142,7 +1142,7 @@ xcodebuild build -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,
 
 Expected: `BUILD SUCCEEDED`
 
-- [ ] **Step 4: コミット**
+- [x] **Step 4: コミット**
 
 ```bash
 git add AudioFolderPlayer/Infrastructure/DocumentPicker/FolderPicker.swift AudioFolderPlayer/Views/FolderView.swift
