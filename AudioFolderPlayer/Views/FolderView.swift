@@ -54,6 +54,7 @@ struct FolderView: View {
                 Text(folderViewModel.summary?.folderName ?? "未選択")
                     .font(.title3)
                     .fontWeight(.bold)
+                    .accessibilityIdentifier("folder-summary-title")
 
                 if let summary = folderViewModel.summary {
                     Text("\(summary.fileCount)ファイル・\(ByteCountFormatter.string(fromByteCount: summary.totalBytes, countStyle: .file))")
@@ -82,6 +83,7 @@ struct FolderView: View {
             }
             .buttonStyle(.borderedProminent)
             .disabled(folderViewModel.isImporting)
+            .accessibilityIdentifier("choose-folder-button")
 
             if folderViewModel.hasImportedAudio || !audioListViewModel.items.isEmpty {
                 Button {
@@ -92,6 +94,7 @@ struct FolderView: View {
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
+                .accessibilityIdentifier("open-audio-list-button")
             }
 
             if folderViewModel.isImporting {

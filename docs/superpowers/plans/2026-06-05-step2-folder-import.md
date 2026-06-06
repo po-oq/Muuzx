@@ -1250,7 +1250,7 @@ git commit -m "feat: show folder import screen at launch"
 - Modify: `AudioFolderPlayerUITests/AudioFolderPlayerUITests.swift`
 - Modify: `docs/superpowers/plans/2026-06-05-step2-folder-import.md`
 
-- [ ] **Step 1: FolderView に UI テスト用 identifier を追加**
+- [x] **Step 1: FolderView に UI テスト用 identifier を追加**
 
 `AudioFolderPlayer/Views/FolderView.swift` に以下の identifier を追加する。
 
@@ -1279,7 +1279,7 @@ Text(folderViewModel.summary?.folderName ?? "未選択")
 .accessibilityIdentifier("open-audio-list-button")
 ```
 
-- [ ] **Step 2: UI テストを FolderView 入口に合わせる**
+- [x] **Step 2: UI テストを FolderView 入口に合わせる**
 
 `AudioFolderPlayerUITests/AudioFolderPlayerUITests.swift` を以下に置き換える。
 
@@ -1323,7 +1323,7 @@ final class AudioFolderPlayerUITests: XCTestCase {
 }
 ```
 
-- [ ] **Step 3: UI テストを実行**
+- [x] **Step 3: UI テストを実行**
 
 Run:
 
@@ -1333,7 +1333,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `Executed 1 test, with 0 failures`
 
-- [ ] **Step 4: 全テストを実行**
+- [x] **Step 4: 全テストを実行**
 
 Run:
 
@@ -1343,7 +1343,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: unit/UI tests がすべて PASS
 
-- [ ] **Step 5: 手動スモークを実施**
+- [ ] **Step 5: 手動スモークを実施**（2026-06-06: UI 自動化で起動・一覧遷移・再生操作までは確認。非対話実行のため Files picker で実フォルダを選択する手動取り込みは未実施）
 
 シミュレータで以下を確認する。
 
@@ -1355,7 +1355,7 @@ Expected: unit/UI tests がすべて PASS
 6. `一覧を開く` で取り込み済みファイルが表示される。
 7. ファイルをタップすると再生中表示とミニプレイヤーが更新される。
 
-- [ ] **Step 6: スモーク結果を plan に追記**
+- [x] **Step 6: スモーク結果を plan に追記**
 
 `docs/superpowers/plans/2026-06-05-step2-folder-import.md` の末尾に以下の形式で結果を追記する。
 
@@ -1368,12 +1368,20 @@ Expected: unit/UI tests がすべて PASS
 - Simulator: iPhone 16 / iOS 18.4
 ```
 
-- [ ] **Step 7: コミット**
+- [x] **Step 7: コミット**
 
 ```bash
 git add AudioFolderPlayer/Views/FolderView.swift AudioFolderPlayerUITests/AudioFolderPlayerUITests.swift docs/superpowers/plans/2026-06-05-step2-folder-import.md
 git commit -m "test: add folder import smoke coverage"
 ```
+
+## Task 7 Smoke Result
+
+- Targeted UI test: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerUITests/AudioFolderPlayerUITests/testFolderScreenCanOpenAudioListAndUseMiniPlayerControls`)
+- Full tests: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData`; 40 unit tests + 1 UI test, 0 failures)
+- UI smoke: PASS (FolderView 起動、sample 一覧遷移、sample-01.mp3 選択、ミニプレイヤー再生/一時停止/スキップ操作を UI テストで確認)
+- Manual folder import smoke: PARTIAL / NOT RUN for actual folder import (非対話実行のため Files picker で mp3/m4a 入りフォルダを手動選択する工程は未実施)
+- Simulator: iPhone 16 / iOS 18.4
 
 ---
 
