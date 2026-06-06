@@ -1343,7 +1343,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: unit/UI tests がすべて PASS
 
-- [ ] **Step 5: 手動スモークを実施**（2026-06-06: UI 自動化で起動・一覧遷移・再生操作までは確認。非対話実行のため Files picker で実フォルダを選択する手動取り込みは未実施）
+- [x] **Step 5: 手動スモークを実施**（2026-06-06: iPhone 16 / iOS 18.4 の Files ローカルストレージに配置した `ManualImportSmoke` を選択し、取り込み・一覧表示・再生まで確認）
 
 シミュレータで以下を確認する。
 
@@ -1380,7 +1380,7 @@ git commit -m "test: add folder import smoke coverage"
 - Targeted UI test: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerUITests/AudioFolderPlayerUITests/testFolderScreenCanOpenAudioListAndUseMiniPlayerControls`)
 - Full tests: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData`; 40 unit tests + 1 UI test, 0 failures)
 - UI smoke: PASS (UI test 起動時に sample 音源へリセットし、FolderView 起動、sample 一覧遷移、sample-01.mp3 選択、ミニプレイヤー再生/一時停止/スキップ操作を確認)
-- Manual folder import smoke: PARTIAL / NOT RUN for actual folder import (非対話実行のため Files picker で mp3/m4a 入りフォルダを手動選択する工程は未実施)
+- Manual folder import smoke: PASS (`ManualImportSmoke` フォルダを Files picker で選択し、取り込み・一覧表示・sample-01.mp3 の再生を確認)
 - Simulator: iPhone 16 / iOS 18.4
 
 ---
@@ -1390,7 +1390,7 @@ git commit -m "test: add folder import smoke coverage"
 **Files:**
 - Modify: `docs/superpowers/plans/2026-06-05-step2-folder-import.md`
 
-- [ ] **Step 1: 未完了チェックを確認**
+- [x] **Step 1: 未完了チェックを確認**
 
 Run:
 
@@ -1400,7 +1400,7 @@ rg -n "\\[ \\]" docs/superpowers/plans/2026-06-05-step2-folder-import.md
 
 Expected: 実装完了時点では output なし。実装途中なら残タスクを確認する。
 
-- [ ] **Step 2: 全テストを再実行**
+- [x] **Step 2: 全テストを再実行**
 
 Run:
 
@@ -1410,7 +1410,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `** TEST SUCCEEDED **`
 
-- [ ] **Step 3: git status を確認**
+- [x] **Step 3: git status を確認**
 
 Run:
 
@@ -1420,7 +1420,7 @@ git status --short --branch
 
 Expected: `## codex/step2-folder-import-design` のみ、未コミット差分なし。
 
-- [ ] **Step 4: 完了コミットが揃っていることを確認**
+- [x] **Step 4: 完了コミットが揃っていることを確認**
 
 Run:
 
