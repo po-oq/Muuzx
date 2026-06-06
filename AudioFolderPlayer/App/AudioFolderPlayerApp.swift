@@ -12,7 +12,10 @@ struct AudioFolderPlayerApp: App {
         let stateDir = (try? AppDirectories.stateDirectory(fileManager))
             ?? fileManager.temporaryDirectory
 
-        if (try? LocalAudioLibrary(directory: audioDir).loadItems().isEmpty) == true {
+        if ProcessInfo.processInfo.arguments.contains("--reset-ui-test-audio") {
+            try? fileManager.removeItem(at: audioDir)
+            try? SampleSeeder(destination: audioDir).seedIfEmpty()
+        } else if (try? LocalAudioLibrary(directory: audioDir).loadItems().isEmpty) == true {
             try? SampleSeeder(destination: audioDir).seedIfEmpty()
         }
 

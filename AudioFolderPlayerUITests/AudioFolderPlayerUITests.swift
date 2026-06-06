@@ -7,6 +7,7 @@ final class AudioFolderPlayerUITests: XCTestCase {
 
     func testFolderScreenCanOpenAudioListAndUseMiniPlayerControls() throws {
         let app = XCUIApplication()
+        app.launchArguments.append("--reset-ui-test-audio")
         app.launch()
 
         XCTAssertTrue(app.staticTexts["folder-summary-title"].waitForExistence(timeout: 5))

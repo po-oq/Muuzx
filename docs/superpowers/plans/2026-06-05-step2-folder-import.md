@@ -1379,7 +1379,7 @@ git commit -m "test: add folder import smoke coverage"
 
 - Targeted UI test: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData -only-testing:AudioFolderPlayerUITests/AudioFolderPlayerUITests/testFolderScreenCanOpenAudioListAndUseMiniPlayerControls`)
 - Full tests: PASS (`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData`; 40 unit tests + 1 UI test, 0 failures)
-- UI smoke: PASS (FolderView 起動、sample 一覧遷移、sample-01.mp3 選択、ミニプレイヤー再生/一時停止/スキップ操作を UI テストで確認)
+- UI smoke: PASS (UI test 起動時に sample 音源へリセットし、FolderView 起動、sample 一覧遷移、sample-01.mp3 選択、ミニプレイヤー再生/一時停止/スキップ操作を確認)
 - Manual folder import smoke: PARTIAL / NOT RUN for actual folder import (非対話実行のため Files picker で mp3/m4a 入りフォルダを手動選択する工程は未実施)
 - Simulator: iPhone 16 / iOS 18.4
 
