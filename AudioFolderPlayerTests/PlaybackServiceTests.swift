@@ -2,13 +2,86 @@ import XCTest
 @testable import AudioFolderPlayer
 
 final class PlaybackServiceTests: XCTestCase {
-    private func makeItem(_ name: String) -> AudioItem {
+    private final class RecordingAudioEngine: AudioEngine {
+        var currentTimeSec: Double = 0
+        var durationSec: Double = 0
+        var onPlaybackEnded: (() -> Void)?
+        private(set) var actions: [String] = []
+
+        func load(url: URL) { actions.append("load:\(url.lastPathComponent)") }
+        func play() { actions.append("play") }
+        func pause() { actions.append("pause") }
+        func seek(toSec seconds: Double) { actions.append("seek:\(seconds)") }
+    }
+
+    private func makeItem(_ name: String, durationSec: Double = 100) -> AudioItem {
         AudioItem(
             id: name, fileName: name,
             localURL: URL(fileURLWithPath: "/tmp/\(name)"),
-            fileSizeBytes: 1, durationSec: 100, positionSec: 0,
+            fileSizeBytes: 1, durationSec: durationSec, positionSec: 0,
             status: .unplayed, updatedAt: Date()
         )
+    }
+
+    func test_play_withStartPosition_loadsSeeksAndPlays() {
+        let engine = RecordingAudioEngine()
+        let service = PlaybackService(engine: engine, items: [makeItem("a.mp3")])
+
+        service.play(at: 0, startPositionSec: 42)
+
+        XCTAssertEqual(engine.actions, ["load:a.mp3", "seek:42.0", "play"])
+    }
+
+    func test_play_withStartPosition_clampsToItemDuration() {
+        let engine = FakeAudioEngine()
+        engine.durationSec = 120
+        let service = PlaybackService(
+            engine: engine,
+            items: [makeItem("a.mp3", durationSec: 80)]
+        )
+
+        service.play(at: 0, startPositionSec: 100)
+
+        XCTAssertEqual(engine.seekedToSec.last, 80)
+    }
+
+    func test_play_withStartPosition_fallsBackToEngineDuration() {
+        let engine = FakeAudioEngine()
+        engine.durationSec = 75
+        let service = PlaybackService(
+            engine: engine,
+            items: [makeItem("a.mp3", durationSec: 0)]
+        )
+
+        service.play(at: 0, startPositionSec: 100)
+
+        XCTAssertEqual(engine.seekedToSec.last, 75)
+    }
+
+    func test_stop_pausesClearsCurrentItemAndNotifiesNil() throws {
+        let engine = FakeAudioEngine()
+        let item = makeItem("a.mp3")
+        let service = PlaybackService(engine: engine, items: [item])
+        var changedItems: [AudioItem?] = []
+        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.play(at: 0)
+
+        service.stop()
+
+        XCTAssertFalse(engine.isPlaying)
+        XCTAssertNil(service.currentIndex)
+        XCTAssertNil(service.currentItem)
+        XCTAssertNil(try XCTUnwrap(changedItems.last))
+    }
+
+    func test_currentPositionAndDuration_exposeEngineValues() {
+        let engine = FakeAudioEngine()
+        engine.currentTimeSec = 12
+        engine.durationSec = 90
+        let service = PlaybackService(engine: engine)
+
+        XCTAssertEqual(service.currentPositionSec, 12)
+        XCTAssertEqual(service.currentDurationSec, 90)
     }
 
     func test_skipForward_advances30Seconds() {
@@ -68,6 +141,24 @@ final class PlaybackServiceTests: XCTestCase {
         XCTAssertEqual(service.currentIndex, 1)
         XCTAssertEqual(engine.loadedURLs.last, URL(fileURLWithPath: "/tmp/b.mp3"))
         XCTAssertTrue(engine.isPlaying)
+    }
+
+    func test_playbackEnded_notifiesCompletedItemBeforeAdvancing() {
+        let engine = FakeAudioEngine()
+        let first = makeItem("a.mp3")
+        let second = makeItem("b.mp3")
+        let service = PlaybackService(engine: engine, items: [first, second])
+        var events: [String] = []
+        service.onItemCompleted = { events.append("completed:\($0.id)") }
+        service.onCurrentItemChanged = { item in
+            events.append("changed:\(item?.id ?? "nil")")
+        }
+        service.play(at: 0)
+        events.removeAll()
+
+        engine.simulatePlaybackEnded()
+
+        XCTAssertEqual(events, ["completed:\(first.id)", "changed:\(second.id)"])
     }
 
     func test_playbackEnded_onLastTrack_stops() {

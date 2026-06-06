@@ -5,6 +5,7 @@ final class PlaybackService {
     static let skipBackwardSec: Double = 10
 
     var onCurrentItemChanged: ((AudioItem?) -> Void)?
+    var onItemCompleted: ((AudioItem) -> Void)?
 
     private let engine: AudioEngine
     private(set) var items: [AudioItem]
@@ -20,6 +21,9 @@ final class PlaybackService {
         guard let i = currentIndex, items.indices.contains(i) else { return nil }
         return items[i]
     }
+
+    var currentPositionSec: Double { engine.currentTimeSec }
+    var currentDurationSec: Double { engine.durationSec }
 
     func setItems(_ items: [AudioItem]) {
         guard let currentItem else {
@@ -38,16 +42,24 @@ final class PlaybackService {
         }
     }
 
-    func play(at index: Int) {
+    func play(at index: Int, startPositionSec: Double = 0) {
         guard items.indices.contains(index) else { return }
         currentIndex = index
         engine.load(url: items[index].localURL)
+        let duration = items[index].durationSec > 0 ? items[index].durationSec : engine.durationSec
+        engine.seek(toSec: min(max(startPositionSec, 0), duration))
         engine.play()
         onCurrentItemChanged?(items[index])
     }
 
     func resume() { engine.play() }
     func pause() { engine.pause() }
+
+    func stop() {
+        engine.pause()
+        currentIndex = nil
+        onCurrentItemChanged?(nil)
+    }
 
     func skipForward() {
         let target = min(engine.currentTimeSec + Self.skipForwardSec, engine.durationSec)
@@ -60,7 +72,8 @@ final class PlaybackService {
     }
 
     private func handlePlaybackEnded() {
-        guard let i = currentIndex else { return }
+        guard let i = currentIndex, items.indices.contains(i) else { return }
+        onItemCompleted?(items[i])
         let next = i + 1
         if items.indices.contains(next) {
             play(at: next)
