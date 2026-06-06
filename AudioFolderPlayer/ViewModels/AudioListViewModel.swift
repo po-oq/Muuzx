@@ -7,6 +7,8 @@ final class AudioListViewModel: ObservableObject {
     @Published private(set) var currentItemId: String?
     @Published private(set) var isPlaying: Bool = false
 
+    var onMetadataCancellationProcessed: (() -> Void)?
+
     private let library: LocalAudioLibrary
     private let playback: PlaybackService
     private let metadata: any AudioMetadataLoading
@@ -82,6 +84,7 @@ final class AudioListViewModel: ObservableObject {
                     self.items[index].durationSec = duration
                     self.playback.setItems(self.items)
                 } catch is CancellationError {
+                    self?.onMetadataCancellationProcessed?()
                     return
                 } catch {
                     continue

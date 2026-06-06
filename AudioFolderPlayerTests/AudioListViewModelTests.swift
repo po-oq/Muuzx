@@ -69,24 +69,25 @@ final class AudioListViewModelTests: XCTestCase {
         let metadata = ControllableAudioMetadataLoader()
         let (viewModel, _) = try makeViewModel(metadata: metadata)
         let oldRequest = await metadata.waitForRequest(at: 0)
+        let oldRequestProcessed = expectation(description: "old request processed as cancelled")
+        viewModel.onMetadataCancellationProcessed = {
+            oldRequestProcessed.fulfill()
+        }
 
         viewModel.load()
         let newRequest = await metadata.waitForRequest(at: 1)
 
-        let oldDurationApplied = expectation(description: "old duration applied")
-        oldDurationApplied.isInverted = true
         let newDurationApplied = expectation(description: "new duration applied")
         let cancellable = viewModel.$items.dropFirst().sink { items in
-            if items.first?.durationSec == 111 {
-                oldDurationApplied.fulfill()
-            }
             if items.first?.durationSec == 125 {
                 newDurationApplied.fulfill()
             }
         }
 
         await metadata.complete(oldRequest, with: 111)
-        await fulfillment(of: [oldDurationApplied], timeout: 0.1)
+        await fulfillment(of: [oldRequestProcessed], timeout: 1)
+        viewModel.onMetadataCancellationProcessed = nil
+        XCTAssertEqual(viewModel.items.first?.durationSec, 0)
 
         await metadata.complete(newRequest, with: 125)
         await fulfillment(of: [newDurationApplied], timeout: 1)
