@@ -51,7 +51,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 - Create: `AudioFolderPlayerTests/AudioMetadataServiceTests.swift`
 - Modify: `AudioFolderPlayer.xcodeproj/project.pbxproj`（`xcodegen generate`）
 
-- [ ] **Step 1: 失敗するメタデータテストを書く**
+- [x] **Step 1: 失敗するメタデータテストを書く**
 
 `AudioFolderPlayerTests/AudioMetadataServiceTests.swift` を作成する。
 
@@ -86,7 +86,7 @@ final class AudioMetadataServiceTests: XCTestCase {
 }
 ```
 
-- [ ] **Step 2: Xcode project を再生成し、テスト失敗を確認する**
+- [x] **Step 2: Xcode project を再生成し、テスト失敗を確認する**
 
 Run:
 
@@ -97,7 +97,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `AudioMetadataService` 未定義で FAIL
 
-- [ ] **Step 3: AudioMetadataService を実装する**
+- [x] **Step 3: AudioMetadataService を実装する**
 
 `AudioFolderPlayer/Services/AudioMetadataService.swift` を作成する。
 
@@ -124,7 +124,7 @@ enum AudioMetadataError: Error {
 }
 ```
 
-- [ ] **Step 4: 対象テストを実行する**
+- [x] **Step 4: 対象テストを実行する**
 
 Run:
 
@@ -135,7 +135,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: `AudioMetadataServiceTests` PASS
 
-- [ ] **Step 5: コミットする**
+- [x] **Step 5: コミットする**
 
 ```bash
 git add AudioFolderPlayer/Services/AudioMetadataService.swift AudioFolderPlayerTests/AudioMetadataServiceTests.swift AudioFolderPlayer.xcodeproj
@@ -150,7 +150,7 @@ git commit -m "feat: add audio metadata loading"
 - Modify: `AudioFolderPlayer/Services/PlaybackService.swift`
 - Modify: `AudioFolderPlayerTests/PlaybackServiceTests.swift`
 
-- [ ] **Step 1: 失敗する PlaybackService テストを追加する**
+- [x] **Step 1: 失敗する PlaybackService テストを追加する**
 
 `AudioFolderPlayerTests/PlaybackServiceTests.swift` に追加する。
 
@@ -217,7 +217,7 @@ func test_currentPositionAndDurationExposeEngineValues() {
 }
 ```
 
-- [ ] **Step 2: PlaybackServiceTests が失敗することを確認する**
+- [x] **Step 2: PlaybackServiceTests が失敗することを確認する**
 
 Run:
 
@@ -227,7 +227,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: 新規 API 未定義で FAIL
 
-- [ ] **Step 3: PlaybackService を拡張する**
+- [x] **Step 3: PlaybackService を拡張する**
 
 `AudioFolderPlayer/Services/PlaybackService.swift` に次の API と動作を追加する。
 
@@ -272,7 +272,7 @@ private func handlePlaybackEnded() {
 }
 ```
 
-- [ ] **Step 4: PlaybackServiceTests を実行する**
+- [x] **Step 4: PlaybackServiceTests を実行する**
 
 Run:
 
@@ -282,7 +282,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: PASS
 
-- [ ] **Step 5: 既存 ViewModel テストも実行する**
+- [x] **Step 5: 既存 ViewModel テストも実行する**
 
 Run:
 
@@ -292,7 +292,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: PASS
 
-- [ ] **Step 6: コミットする**
+- [x] **Step 6: コミットする**
 
 ```bash
 git add AudioFolderPlayer/Services/PlaybackService.swift AudioFolderPlayerTests/PlaybackServiceTests.swift
@@ -309,7 +309,7 @@ git commit -m "feat: extend playback session controls"
 - Create: `AudioFolderPlayerTests/Support/FakeAudioMetadataLoader.swift`
 - Modify: `AudioFolderPlayer.xcodeproj/project.pbxproj`（`xcodegen generate`）
 
-- [ ] **Step 1: FakeAudioMetadataLoader を作成する**
+- [x] **Step 1: FakeAudioMetadataLoader を作成する**
 
 `AudioFolderPlayerTests/Support/FakeAudioMetadataLoader.swift` を作成する。
 
@@ -333,7 +333,7 @@ actor FakeAudioMetadataLoader: AudioMetadataLoading {
 }
 ```
 
-- [ ] **Step 2: 失敗するメタデータ反映テストを書く**
+- [x] **Step 2: 失敗するメタデータ反映テストを書く**
 
 `AudioFolderPlayerTests/AudioListViewModelTests.swift` の `makeViewModel` に metadata 注入を追加し、次を追加する。
 
@@ -357,7 +357,7 @@ func test_load_displaysItemsBeforeMetadataAndAppliesDurationLater() async throws
 
 ```
 
-- [ ] **Step 3: テスト失敗を確認する**
+- [x] **Step 3: テスト失敗を確認する**
 
 Run:
 
@@ -368,7 +368,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: metadata 注入 API 未定義で FAIL
 
-- [ ] **Step 4: AudioListViewModel に metadata タスクを追加する**
+- [x] **Step 4: AudioListViewModel に metadata タスクを追加する**
 
 `AudioListViewModel` に次を追加する。
 
@@ -424,7 +424,7 @@ private func updateDuration(_ duration: Double, for id: String) {
 }
 ```
 
-- [ ] **Step 5: 対象テストを実行する**
+- [x] **Step 5: 対象テストを実行する**
 
 Run:
 
@@ -435,7 +435,7 @@ xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,n
 
 Expected: PASS
 
-- [ ] **Step 6: コミットする**
+- [x] **Step 6: コミットする**
 
 ```bash
 git add AudioFolderPlayer/ViewModels/AudioListViewModel.swift AudioFolderPlayerTests/AudioListViewModelTests.swift AudioFolderPlayerTests/Support/FakeAudioMetadataLoader.swift AudioFolderPlayer.xcodeproj
