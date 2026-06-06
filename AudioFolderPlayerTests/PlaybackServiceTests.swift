@@ -58,6 +58,19 @@ final class PlaybackServiceTests: XCTestCase {
         XCTAssertEqual(engine.seekedToSec.last, 75)
     }
 
+    func test_play_withStartPosition_preservesPositionWhenDurationIsUnknown() {
+        let engine = FakeAudioEngine()
+        engine.durationSec = 0
+        let service = PlaybackService(
+            engine: engine,
+            items: [makeItem("a.mp3", durationSec: 0)]
+        )
+
+        service.play(at: 0, startPositionSec: 42)
+
+        XCTAssertEqual(engine.seekedToSec.last, 42)
+    }
+
     func test_stop_pausesClearsCurrentItemAndNotifiesNil() throws {
         let engine = FakeAudioEngine()
         let item = makeItem("a.mp3")

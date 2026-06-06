@@ -47,7 +47,8 @@ final class PlaybackService {
         currentIndex = index
         engine.load(url: items[index].localURL)
         let duration = items[index].durationSec > 0 ? items[index].durationSec : engine.durationSec
-        engine.seek(toSec: min(max(startPositionSec, 0), duration))
+        let position = max(startPositionSec, 0)
+        engine.seek(toSec: duration > 0 ? min(position, duration) : position)
         engine.play()
         onCurrentItemChanged?(items[index])
     }
