@@ -37,7 +37,18 @@ final class AVPlayerAudioEngine: AudioEngine {
     }
 
     @objc private func didPlayToEnd(_ note: Notification) {
-        guard (note.object as? AVPlayerItem) === player.currentItem else { return }
+        guard let endedItem = note.object as? AVPlayerItem else { return }
+        if Thread.isMainThread {
+            notifyPlaybackEndedIfCurrent(endedItem)
+        } else {
+            DispatchQueue.main.async { [weak self] in
+                self?.notifyPlaybackEndedIfCurrent(endedItem)
+            }
+        }
+    }
+
+    private func notifyPlaybackEndedIfCurrent(_ endedItem: AVPlayerItem) {
+        guard endedItem === player.currentItem else { return }
         onPlaybackEnded?()
     }
 }

@@ -23,19 +23,18 @@ final class AudioListViewModel: ObservableObject {
         self.library = library
         self.playback = playback
         self.metadata = metadata
+        // Playback callbacks are synchronously delivered on the main thread.
         self.playback.onCurrentItemChanged = { [weak self] item in
-            Task { @MainActor [weak self] in
+            MainActor.assumeIsolated {
                 self?.updateCurrentItem(item)
             }
         }
         self.playback.onItemCompleted = { [weak self, playback] item in
-            let completedPosition = playback.currentPositionSec
-            let completedDuration = playback.currentDurationSec
-            Task { @MainActor [weak self] in
+            MainActor.assumeIsolated {
                 self?.handleItemCompleted(
                     item,
-                    positionSec: completedPosition,
-                    durationSec: completedDuration
+                    positionSec: playback.currentPositionSec,
+                    durationSec: playback.currentDurationSec
                 )
             }
         }
@@ -141,7 +140,13 @@ final class AudioListViewModel: ObservableObject {
     private func updateCurrentItem(_ item: AudioItem?) {
         currentItemId = item?.id
         isPlaying = item != nil
-        if item == nil {
+        if let item,
+           let index = items.firstIndex(where: { $0.id == item.id }),
+           items[index].status == .unplayed {
+            markInProgress(at: index, positionSec: items[index].positionSec)
+            playback.setItems(items)
+            startObservingPlayback()
+        } else if item == nil {
             stopObservingPlayback()
         } else {
             startObservingPlayback()
@@ -185,16 +190,6 @@ final class AudioListViewModel: ObservableObject {
         }
         items[index].status = .played
         items[index].updatedAt = Date()
-
-        if let nextItem = playback.currentItem,
-           let nextIndex = items.firstIndex(where: { $0.id == nextItem.id }) {
-            markInProgress(at: nextIndex, positionSec: 0)
-            currentItemId = nextItem.id
-            isPlaying = true
-            startObservingPlayback()
-        } else {
-            updateCurrentItem(nil)
-        }
         playback.setItems(items)
     }
 

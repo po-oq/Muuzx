@@ -36,12 +36,6 @@ final class AudioListViewModelTests: XCTestCase {
         try data.write(to: tempDir.appendingPathComponent(name))
     }
 
-    private func waitForState(_ condition: @escaping () -> Bool) async {
-        for _ in 0..<10 where !condition() {
-            await Task.yield()
-        }
-    }
-
     func test_load_updatesDurationAsynchronously() async throws {
         let metadata = ControllableAudioMetadataLoader()
         let (viewModel, _) = try makeViewModel(metadata: metadata)
@@ -98,14 +92,13 @@ final class AudioListViewModelTests: XCTestCase {
         _ = cancellable
     }
 
-    func test_playbackEnded_advancesCurrentItemAndKeepsPlaying() async throws {
+    func test_playbackEnded_advancesCurrentItemAndKeepsPlaying() throws {
         let (viewModel, engine) = try makeViewModel()
         let first = try XCTUnwrap(viewModel.items.first)
         let second = try XCTUnwrap(viewModel.items.dropFirst().first)
 
         viewModel.play(first)
         engine.simulatePlaybackEnded()
-        await waitForState { viewModel.currentItemId == second.id }
 
         XCTAssertEqual(viewModel.currentItemId, second.id)
         XCTAssertEqual(viewModel.currentItem?.id, second.id)
@@ -114,13 +107,12 @@ final class AudioListViewModelTests: XCTestCase {
         XCTAssertTrue(viewModel.isPlaying)
     }
 
-    func test_playbackEnded_onLastItemClearsCurrentItemAndStopsPlaying() async throws {
+    func test_playbackEnded_onLastItemClearsCurrentItemAndStopsPlaying() throws {
         let (viewModel, engine) = try makeViewModel()
         let last = try XCTUnwrap(viewModel.items.last)
 
         viewModel.play(last)
         engine.simulatePlaybackEnded()
-        await waitForState { viewModel.currentItemId == nil }
 
         XCTAssertNil(viewModel.currentItemId)
         XCTAssertNil(viewModel.currentItem)
@@ -270,7 +262,7 @@ final class AudioListViewModelTests: XCTestCase {
         XCTAssertFalse(engine.isPlaying)
     }
 
-    func test_playbackEnded_marksCompletedItemPlayedAndAdvancesToNext() async throws {
+    func test_playbackEnded_marksCompletedItemPlayedAndAdvancesToNext() throws {
         let (viewModel, engine) = try makeViewModel()
         let first = try XCTUnwrap(viewModel.items.first)
         let second = try XCTUnwrap(viewModel.items.dropFirst().first)
@@ -278,13 +270,28 @@ final class AudioListViewModelTests: XCTestCase {
         viewModel.play(first)
 
         engine.simulatePlaybackEnded()
-        await waitForState { viewModel.currentItemId == second.id }
 
         let completed = try XCTUnwrap(viewModel.items.first { $0.id == first.id })
         XCTAssertEqual(completed.positionSec, 100)
         XCTAssertEqual(completed.status, .played)
         XCTAssertEqual(viewModel.currentItemId, second.id)
         XCTAssertTrue(viewModel.isPlaying)
+    }
+
+    func test_playbackEnded_thenMarkUnplayed_isNotOverwrittenByDelayedCompletion() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(first)
+
+        engine.simulatePlaybackEnded()
+        viewModel.markUnplayed(first)
+
+        let updated = try XCTUnwrap(viewModel.items.first { $0.id == first.id })
+        XCTAssertEqual(updated.positionSec, 0)
+        XCTAssertEqual(updated.status, .unplayed)
+        XCTAssertEqual(viewModel.currentItemId, second.id)
     }
 
     func test_pauseImmediatelyUpdatesDisplayedPosition() throws {
