@@ -108,7 +108,9 @@ final class AudioListViewModelTests: XCTestCase {
         await waitForState { viewModel.currentItemId == second.id }
 
         XCTAssertEqual(viewModel.currentItemId, second.id)
-        XCTAssertEqual(viewModel.currentItem, second)
+        XCTAssertEqual(viewModel.currentItem?.id, second.id)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
         XCTAssertTrue(viewModel.isPlaying)
     }
 
@@ -123,5 +125,191 @@ final class AudioListViewModelTests: XCTestCase {
         XCTAssertNil(viewModel.currentItemId)
         XCTAssertNil(viewModel.currentItem)
         XCTAssertFalse(viewModel.isPlaying)
+    }
+
+    func test_refreshPlaybackState_marksItemInProgress() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        engine.durationSec = 100
+
+        viewModel.play(first)
+        engine.currentTimeSec = 42
+        viewModel.refreshPlaybackState()
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 42)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+    }
+
+    func test_refreshPlaybackState_marksItemPlayedWithinLastThirtySeconds() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        engine.durationSec = 100
+
+        viewModel.play(first)
+        engine.currentTimeSec = 75
+        viewModel.refreshPlaybackState()
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 100)
+        XCTAssertEqual(viewModel.currentItem?.status, .played)
+    }
+
+    func test_refreshPlaybackState_withUnknownDurationDoesNotMarkItemPlayed() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+
+        viewModel.play(first)
+        engine.currentTimeSec = 75
+        viewModel.refreshPlaybackState()
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 75)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+    }
+
+    func test_play_resumesInProgressItemFromStoredPosition() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(first)
+        engine.currentTimeSec = 42
+        viewModel.refreshPlaybackState()
+        viewModel.play(second)
+
+        viewModel.play(try XCTUnwrap(viewModel.items.first))
+
+        XCTAssertEqual(engine.seekedToSec.last, 42)
+    }
+
+    func test_playPlayedItemStartsFromBeginning() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(first)
+        engine.currentTimeSec = 75
+        viewModel.refreshPlaybackState()
+        viewModel.play(second)
+
+        viewModel.play(try XCTUnwrap(viewModel.items.first))
+
+        XCTAssertEqual(engine.seekedToSec.last, 0)
+    }
+
+    func test_playFromBeginning_startsAtZeroAndMarksItemInProgress() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let item = try XCTUnwrap(viewModel.items.first)
+
+        viewModel.playFromBeginning(item)
+
+        XCTAssertEqual(engine.seekedToSec.last, 0)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+        XCTAssertTrue(viewModel.isPlaying)
+    }
+
+    func test_markUnplayed_currentItemStopsAndClearsSelection() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let item = try XCTUnwrap(viewModel.items.first)
+        viewModel.play(item)
+
+        viewModel.markUnplayed(item)
+
+        XCTAssertNil(viewModel.currentItem)
+        XCTAssertFalse(viewModel.isPlaying)
+        XCTAssertFalse(engine.isPlaying)
+        XCTAssertEqual(viewModel.items[0].positionSec, 0)
+        XCTAssertEqual(viewModel.items[0].status, .unplayed)
+    }
+
+    func test_markUnplayed_nonCurrentItemResetsItsState() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(first)
+        engine.currentTimeSec = 42
+        viewModel.refreshPlaybackState()
+        viewModel.play(second)
+
+        viewModel.markUnplayed(try XCTUnwrap(viewModel.items.first))
+
+        XCTAssertEqual(viewModel.currentItemId, second.id)
+        XCTAssertTrue(engine.isPlaying)
+        XCTAssertEqual(viewModel.items[0].positionSec, 0)
+        XCTAssertEqual(viewModel.items[0].status, .unplayed)
+    }
+
+    func test_load_preservesInMemoryStateForSameFileId() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        engine.durationSec = 100
+        viewModel.play(first)
+        engine.currentTimeSec = 42
+        viewModel.refreshPlaybackState()
+        let stateBeforeReload = try XCTUnwrap(viewModel.items.first)
+
+        viewModel.load()
+
+        let reloaded = try XCTUnwrap(viewModel.items.first { $0.id == first.id })
+        XCTAssertEqual(reloaded.durationSec, 100)
+        XCTAssertEqual(reloaded.positionSec, 42)
+        XCTAssertEqual(reloaded.status, .inProgress)
+        XCTAssertEqual(reloaded.updatedAt, stateBeforeReload.updatedAt)
+    }
+
+    func test_load_whenCurrentItemWasRemovedStopsAndClearsSelection() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        viewModel.play(first)
+        try FileManager.default.removeItem(at: first.localURL)
+
+        viewModel.load()
+
+        XCTAssertNil(viewModel.currentItem)
+        XCTAssertFalse(viewModel.isPlaying)
+        XCTAssertFalse(engine.isPlaying)
+    }
+
+    func test_playbackEnded_marksCompletedItemPlayedAndAdvancesToNext() async throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(first)
+
+        engine.simulatePlaybackEnded()
+        await waitForState { viewModel.currentItemId == second.id }
+
+        let completed = try XCTUnwrap(viewModel.items.first { $0.id == first.id })
+        XCTAssertEqual(completed.positionSec, 100)
+        XCTAssertEqual(completed.status, .played)
+        XCTAssertEqual(viewModel.currentItemId, second.id)
+        XCTAssertTrue(viewModel.isPlaying)
+    }
+
+    func test_pauseImmediatelyUpdatesDisplayedPosition() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        viewModel.play(first)
+        engine.currentTimeSec = 42
+
+        viewModel.togglePlayPause()
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 42)
+        XCTAssertFalse(viewModel.isPlaying)
+    }
+
+    func test_skipImmediatelyUpdatesDisplayedPosition() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        engine.durationSec = 100
+        viewModel.play(first)
+        engine.currentTimeSec = 20
+
+        viewModel.skipForward()
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 50)
+
+        viewModel.skipBackward()
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 40)
     }
 }
