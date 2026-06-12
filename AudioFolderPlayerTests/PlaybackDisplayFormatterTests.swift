@@ -10,6 +10,19 @@ final class PlaybackDisplayFormatterTests: XCTestCase {
         XCTAssertEqual(PlaybackDisplayFormatter.time(4360), "1:12:40")
     }
 
+    func test_timeFormatsHoursBeyondInt32WithoutWrappingNegative() {
+        let seconds = Double(Int(Int32.max) + 1) * 3600
+
+        XCTAssertEqual(PlaybackDisplayFormatter.time(seconds), "2147483648:00:00")
+    }
+
+    func test_timeCapsFiniteValuesBeyondIntRangeAtIntMaxSeconds() {
+        XCTAssertEqual(
+            PlaybackDisplayFormatter.time(.greatestFiniteMagnitude),
+            "2562047788015215:30:07"
+        )
+    }
+
     func test_timeClampsInvalidValuesToZero() {
         XCTAssertEqual(PlaybackDisplayFormatter.time(-1), "0:00")
         XCTAssertEqual(PlaybackDisplayFormatter.time(.nan), "0:00")

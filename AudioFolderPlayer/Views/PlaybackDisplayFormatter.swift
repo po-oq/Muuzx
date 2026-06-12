@@ -3,12 +3,12 @@ import Foundation
 enum PlaybackDisplayFormatter {
     static func time(_ seconds: Double) -> String {
         let total: Int
-        if seconds.isFinite,
-           seconds > 0,
-           let converted = Int(exactly: seconds.rounded(.down)) {
-            total = converted
-        } else {
+        if !seconds.isFinite || seconds <= 0 {
             total = 0
+        } else if seconds >= Double(Int.max) {
+            total = Int.max
+        } else {
+            total = Int(seconds.rounded(.down))
         }
 
         let hours = total / 3600
@@ -16,8 +16,8 @@ enum PlaybackDisplayFormatter {
         let seconds = total % 60
 
         return hours > 0
-            ? String(format: "%d:%02d:%02d", hours, minutes, seconds)
-            : String(format: "%d:%02d", minutes, seconds)
+            ? "\(hours):\(twoDigits(minutes)):\(twoDigits(seconds))"
+            : "\(minutes):\(twoDigits(seconds))"
     }
 
     static func progress(position: Double, duration: Double) -> Double {
@@ -42,5 +42,9 @@ enum PlaybackDisplayFormatter {
         case .played:
             return hasKnownDuration ? "完了・\(time(duration))" : "完了"
         }
+    }
+
+    private static func twoDigits(_ value: Int) -> String {
+        value < 10 ? "0\(value)" : "\(value)"
     }
 }
