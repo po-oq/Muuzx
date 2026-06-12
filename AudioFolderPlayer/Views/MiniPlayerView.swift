@@ -28,17 +28,20 @@ struct MiniPlayerView: View {
             HStack(spacing: 44) {
                 Button(action: viewModel.skipBackward) {
                     Image(systemName: "gobackward.10")
+                        .frame(width: 44, height: 44)
                 }
                 .accessibilityIdentifier("skip-backward-button")
 
                 Button(action: viewModel.togglePlayPause) {
                     Image(systemName: viewModel.isPlaying ? "pause.fill" : "play.fill")
                         .font(.title2)
+                        .frame(width: 44, height: 44)
                 }
                 .accessibilityIdentifier("play-pause-button")
 
                 Button(action: viewModel.skipForward) {
                     Image(systemName: "goforward.30")
+                        .frame(width: 44, height: 44)
                 }
                 .accessibilityIdentifier("skip-forward-button")
             }

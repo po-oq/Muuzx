@@ -66,7 +66,10 @@ struct AudioListView: View {
         }
         .navigationTitle(folderName ?? "ファイル一覧")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { viewModel.load() }
+        .onAppear {
+            viewModel.load()
+            viewModel.startObservingPlaybackIfNeeded()
+        }
         .onDisappear { viewModel.stopObservingPlayback() }
     }
 }

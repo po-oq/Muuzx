@@ -366,6 +366,29 @@ final class AudioListViewModelTests: XCTestCase {
         XCTAssertFalse(viewModel.isPlaying)
     }
 
+    func test_startObservingPlaybackIfNeeded_afterListReentryRefreshesPosition() async throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        viewModel.play(first)
+        viewModel.stopObservingPlayback()
+        engine.currentTimeSec = 42
+        let positionUpdated = expectation(description: "position updated after observation restarts")
+        var didObservePositionUpdate = false
+        let cancellable = viewModel.$items.dropFirst().sink { items in
+            if items.first?.positionSec == 42, !didObservePositionUpdate {
+                didObservePositionUpdate = true
+                positionUpdated.fulfill()
+            }
+        }
+
+        viewModel.load()
+        viewModel.startObservingPlaybackIfNeeded()
+
+        await fulfillment(of: [positionUpdated], timeout: 2)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 42)
+        _ = cancellable
+    }
+
     func test_skipImmediatelyUpdatesDisplayedPosition() throws {
         let (viewModel, engine) = try makeViewModel()
         let first = try XCTUnwrap(viewModel.items.first)

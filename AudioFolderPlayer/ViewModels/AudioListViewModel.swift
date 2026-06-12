@@ -65,7 +65,7 @@ final class AudioListViewModel: ObservableObject {
         playback.play(at: index, startPositionSec: startPosition)
         currentItemId = item.id
         isPlaying = true
-        startObservingPlayback()
+        startObservingPlaybackIfNeeded()
     }
 
     func playFromBeginning(_ item: AudioItem) {
@@ -75,7 +75,7 @@ final class AudioListViewModel: ObservableObject {
         playback.play(at: index, startPositionSec: 0)
         currentItemId = item.id
         isPlaying = true
-        startObservingPlayback()
+        startObservingPlaybackIfNeeded()
     }
 
     func markUnplayed(_ item: AudioItem) {
@@ -100,7 +100,7 @@ final class AudioListViewModel: ObservableObject {
             guard currentItemId != nil else { return }
             playback.resume()
             isPlaying = true
-            startObservingPlayback()
+            startObservingPlaybackIfNeeded()
         }
     }
 
@@ -129,6 +129,21 @@ final class AudioListViewModel: ObservableObject {
         playbackObservationTask = nil
     }
 
+    func startObservingPlaybackIfNeeded() {
+        guard isPlaying, currentItem != nil, playbackObservationTask == nil else { return }
+        playbackObservationTask = Task { [weak self] in
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(1))
+                guard !Task.isCancelled else { return }
+                if let self {
+                    self.refreshPlaybackState()
+                } else {
+                    return
+                }
+            }
+        }
+    }
+
     var currentItem: AudioItem? {
         items.first { $0.id == currentItemId }
     }
@@ -141,11 +156,11 @@ final class AudioListViewModel: ObservableObject {
            reason == .automatic {
             markInProgress(at: index, positionSec: 0)
             playback.setItems(items)
-            startObservingPlayback()
+            startObservingPlaybackIfNeeded()
         } else if item == nil {
             stopObservingPlayback()
         } else {
-            startObservingPlayback()
+            startObservingPlaybackIfNeeded()
         }
     }
 
@@ -187,21 +202,6 @@ final class AudioListViewModel: ObservableObject {
         items[index].status = .played
         items[index].updatedAt = Date()
         playback.setItems(items)
-    }
-
-    private func startObservingPlayback() {
-        playbackObservationTask?.cancel()
-        playbackObservationTask = Task { [weak self] in
-            while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled else { return }
-                if let self {
-                    self.refreshPlaybackState()
-                } else {
-                    return
-                }
-            }
-        }
     }
 
     private func startMetadataLoading() {
