@@ -36,6 +36,28 @@ final class AudioListViewModelTests: XCTestCase {
         try data.write(to: tempDir.appendingPathComponent(name))
     }
 
+    func test_deinit_releasesPlaybackServiceAndEngine() {
+        weak var weakPlayback: PlaybackService?
+        weak var weakEngine: FakeAudioEngine?
+
+        autoreleasepool {
+            let engine = FakeAudioEngine()
+            let playback = PlaybackService(engine: engine)
+            let library = LocalAudioLibrary(directory: tempDir)
+            let viewModel = AudioListViewModel(
+                library: library,
+                playback: playback,
+                metadata: FakeAudioMetadataLoader(durations: [:])
+            )
+            weakPlayback = playback
+            weakEngine = engine
+            _ = viewModel
+        }
+
+        XCTAssertNil(weakPlayback)
+        XCTAssertNil(weakEngine)
+    }
+
     func test_load_updatesDurationAsynchronously() async throws {
         let metadata = ControllableAudioMetadataLoader()
         let (viewModel, _) = try makeViewModel(metadata: metadata)

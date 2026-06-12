@@ -26,8 +26,9 @@ final class AudioListViewModel: ObservableObject {
         self.playback.onCurrentItemChanged = { [weak self] item, reason in
             self?.updateCurrentItem(item, reason: reason)
         }
-        self.playback.onItemCompleted = { [weak self, playback] item in
-            self?.handleItemCompleted(
+        self.playback.onItemCompleted = { [weak self, weak playback] item in
+            guard let self, let playback else { return }
+            self.handleItemCompleted(
                 item,
                 positionSec: playback.currentPositionSec,
                 durationSec: playback.currentDurationSec
