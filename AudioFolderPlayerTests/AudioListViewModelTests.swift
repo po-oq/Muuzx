@@ -170,6 +170,8 @@ final class AudioListViewModelTests: XCTestCase {
         viewModel.play(try XCTUnwrap(viewModel.items.first))
 
         XCTAssertEqual(engine.seekedToSec.last, 42)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 42)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
     }
 
     func test_playPlayedItemStartsFromBeginning() throws {
@@ -276,6 +278,42 @@ final class AudioListViewModelTests: XCTestCase {
         XCTAssertEqual(completed.status, .played)
         XCTAssertEqual(viewModel.currentItemId, second.id)
         XCTAssertTrue(viewModel.isPlaying)
+    }
+
+    func test_playbackEnded_resetsInProgressNextItemToBeginning() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(second)
+        engine.currentTimeSec = 42
+        viewModel.refreshPlaybackState()
+        viewModel.play(first)
+
+        engine.simulatePlaybackEnded()
+
+        XCTAssertEqual(engine.seekedToSec.last, 0)
+        XCTAssertEqual(viewModel.currentItemId, second.id)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+    }
+
+    func test_playbackEnded_resetsPlayedNextItemToBeginning() throws {
+        let (viewModel, engine) = try makeViewModel()
+        let first = try XCTUnwrap(viewModel.items.first)
+        let second = try XCTUnwrap(viewModel.items.dropFirst().first)
+        engine.durationSec = 100
+        viewModel.play(second)
+        engine.currentTimeSec = 75
+        viewModel.refreshPlaybackState()
+        viewModel.play(first)
+
+        engine.simulatePlaybackEnded()
+
+        XCTAssertEqual(engine.seekedToSec.last, 0)
+        XCTAssertEqual(viewModel.currentItemId, second.id)
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
     }
 
     func test_playbackEnded_thenMarkUnplayed_isNotOverwrittenByDelayedCompletion() throws {
