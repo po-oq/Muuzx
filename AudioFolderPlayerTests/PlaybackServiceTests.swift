@@ -1,6 +1,7 @@
 import XCTest
 @testable import AudioFolderPlayer
 
+@MainActor
 final class PlaybackServiceTests: XCTestCase {
     private final class RecordingAudioEngine: AudioEngine {
         var currentTimeSec: Double = 0
@@ -26,10 +27,13 @@ final class PlaybackServiceTests: XCTestCase {
     func test_play_withStartPosition_loadsSeeksAndPlays() {
         let engine = RecordingAudioEngine()
         let service = PlaybackService(engine: engine, items: [makeItem("a.mp3")])
+        var reasons: [PlaybackItemChangeReason] = []
+        service.onCurrentItemChanged = { _, reason in reasons.append(reason) }
 
         service.play(at: 0, startPositionSec: 42)
 
         XCTAssertEqual(engine.actions, ["load:a.mp3", "seek:42.0", "play"])
+        XCTAssertEqual(reasons, [.manual])
     }
 
     func test_play_withStartPosition_clampsToItemDuration() {
@@ -76,7 +80,7 @@ final class PlaybackServiceTests: XCTestCase {
         let item = makeItem("a.mp3")
         let service = PlaybackService(engine: engine, items: [item])
         var changedItems: [AudioItem?] = []
-        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.onCurrentItemChanged = { item, _ in changedItems.append(item) }
         service.play(at: 0)
 
         service.stop()
@@ -163,15 +167,15 @@ final class PlaybackServiceTests: XCTestCase {
         let service = PlaybackService(engine: engine, items: [first, second])
         var events: [String] = []
         service.onItemCompleted = { events.append("completed:\($0.id)") }
-        service.onCurrentItemChanged = { item in
-            events.append("changed:\(item?.id ?? "nil")")
+        service.onCurrentItemChanged = { item, reason in
+            events.append("changed:\(item?.id ?? "nil"):\(reason)")
         }
         service.play(at: 0)
         events.removeAll()
 
         engine.simulatePlaybackEnded()
 
-        XCTAssertEqual(events, ["completed:\(first.id)", "changed:\(second.id)"])
+        XCTAssertEqual(events, ["completed:\(first.id)", "changed:\(second.id):automatic"])
     }
 
     func test_playbackEnded_onLastTrack_stops() {
@@ -193,7 +197,7 @@ final class PlaybackServiceTests: XCTestCase {
         let second = makeItem("b.mp3")
         let service = PlaybackService(engine: engine, items: [first, second])
         var changedItems: [AudioItem?] = []
-        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.onCurrentItemChanged = { item, _ in changedItems.append(item) }
         service.play(at: 1)
 
         service.setItems([first])
@@ -211,7 +215,7 @@ final class PlaybackServiceTests: XCTestCase {
         let second = makeItem("b.mp3")
         let service = PlaybackService(engine: engine, items: [first, second])
         var changedItems: [AudioItem?] = []
-        service.onCurrentItemChanged = { changedItems.append($0) }
+        service.onCurrentItemChanged = { item, _ in changedItems.append(item) }
         service.play(at: 1)
 
         service.setItems([second, first])

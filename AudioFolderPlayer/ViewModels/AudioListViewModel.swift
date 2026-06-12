@@ -14,7 +14,6 @@ final class AudioListViewModel: ObservableObject {
     private let metadata: any AudioMetadataLoading
     private var metadataTask: Task<Void, Never>?
     private var playbackObservationTask: Task<Void, Never>?
-    private var expectedManualCurrentItemId: String?
 
     init(
         library: LocalAudioLibrary,
@@ -24,20 +23,15 @@ final class AudioListViewModel: ObservableObject {
         self.library = library
         self.playback = playback
         self.metadata = metadata
-        // Playback callbacks are synchronously delivered on the main thread.
-        self.playback.onCurrentItemChanged = { [weak self] item in
-            MainActor.assumeIsolated {
-                self?.updateCurrentItem(item)
-            }
+        self.playback.onCurrentItemChanged = { [weak self] item, reason in
+            self?.updateCurrentItem(item, reason: reason)
         }
         self.playback.onItemCompleted = { [weak self, playback] item in
-            MainActor.assumeIsolated {
-                self?.handleItemCompleted(
-                    item,
-                    positionSec: playback.currentPositionSec,
-                    durationSec: playback.currentDurationSec
-                )
-            }
+            self?.handleItemCompleted(
+                item,
+                positionSec: playback.currentPositionSec,
+                durationSec: playback.currentDurationSec
+            )
         }
     }
 
@@ -57,7 +51,7 @@ final class AudioListViewModel: ObservableObject {
         playback.setItems(items)
         if let currentItemId, !items.contains(where: { $0.id == currentItemId }) {
             playback.stop()
-            updateCurrentItem(nil)
+            updateCurrentItem(nil, reason: .stopped)
         }
         startMetadataLoading()
     }
@@ -67,9 +61,7 @@ final class AudioListViewModel: ObservableObject {
         let startPosition = items[index].status == .played ? 0 : items[index].positionSec
         markInProgress(at: index, positionSec: startPosition)
         playback.setItems(items)
-        expectedManualCurrentItemId = item.id
         playback.play(at: index, startPositionSec: startPosition)
-        expectedManualCurrentItemId = nil
         currentItemId = item.id
         isPlaying = true
         startObservingPlayback()
@@ -79,9 +71,7 @@ final class AudioListViewModel: ObservableObject {
         guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
         markInProgress(at: index, positionSec: 0)
         playback.setItems(items)
-        expectedManualCurrentItemId = item.id
         playback.play(at: index, startPositionSec: 0)
-        expectedManualCurrentItemId = nil
         currentItemId = item.id
         isPlaying = true
         startObservingPlayback()
@@ -91,7 +81,7 @@ final class AudioListViewModel: ObservableObject {
         guard let index = items.firstIndex(where: { $0.id == item.id }) else { return }
         if currentItemId == item.id {
             playback.stop()
-            updateCurrentItem(nil)
+            updateCurrentItem(nil, reason: .stopped)
         }
         items[index].positionSec = 0
         items[index].status = .unplayed
@@ -142,12 +132,12 @@ final class AudioListViewModel: ObservableObject {
         items.first { $0.id == currentItemId }
     }
 
-    private func updateCurrentItem(_ item: AudioItem?) {
+    private func updateCurrentItem(_ item: AudioItem?, reason: PlaybackItemChangeReason) {
         currentItemId = item?.id
         isPlaying = item != nil
         if let item,
            let index = items.firstIndex(where: { $0.id == item.id }),
-           expectedManualCurrentItemId != item.id {
+           reason == .automatic {
             markInProgress(at: index, positionSec: 0)
             playback.setItems(items)
             startObservingPlayback()

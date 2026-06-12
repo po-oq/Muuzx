@@ -1,10 +1,17 @@
 import Foundation
 
+enum PlaybackItemChangeReason: String, Equatable, Sendable {
+    case manual
+    case automatic
+    case stopped
+}
+
+@MainActor
 final class PlaybackService {
     static let skipForwardSec: Double = 30
     static let skipBackwardSec: Double = 10
 
-    var onCurrentItemChanged: ((AudioItem?) -> Void)?
+    var onCurrentItemChanged: ((AudioItem?, PlaybackItemChangeReason) -> Void)?
     var onItemCompleted: ((AudioItem) -> Void)?
 
     private let engine: AudioEngine
@@ -38,11 +45,19 @@ final class PlaybackService {
         } else {
             currentIndex = nil
             engine.pause()
-            onCurrentItemChanged?(nil)
+            onCurrentItemChanged?(nil, .stopped)
         }
     }
 
     func play(at index: Int, startPositionSec: Double = 0) {
+        play(at: index, startPositionSec: startPositionSec, reason: .manual)
+    }
+
+    private func play(
+        at index: Int,
+        startPositionSec: Double = 0,
+        reason: PlaybackItemChangeReason
+    ) {
         guard items.indices.contains(index) else { return }
         currentIndex = index
         engine.load(url: items[index].localURL)
@@ -50,7 +65,7 @@ final class PlaybackService {
         let position = max(startPositionSec, 0)
         engine.seek(toSec: duration > 0 ? min(position, duration) : position)
         engine.play()
-        onCurrentItemChanged?(items[index])
+        onCurrentItemChanged?(items[index], reason)
     }
 
     func resume() { engine.play() }
@@ -59,7 +74,7 @@ final class PlaybackService {
     func stop() {
         engine.pause()
         currentIndex = nil
-        onCurrentItemChanged?(nil)
+        onCurrentItemChanged?(nil, .stopped)
     }
 
     func skipForward() {
@@ -77,10 +92,10 @@ final class PlaybackService {
         onItemCompleted?(items[i])
         let next = i + 1
         if items.indices.contains(next) {
-            play(at: next)
+            play(at: next, reason: .automatic)
         } else {
             currentIndex = nil
-            onCurrentItemChanged?(nil)
+            onCurrentItemChanged?(nil, .stopped)
         }
     }
 }
