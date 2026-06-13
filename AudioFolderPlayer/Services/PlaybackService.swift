@@ -77,14 +77,18 @@ final class PlaybackService {
         onCurrentItemChanged?(nil, .stopped)
     }
 
-    func skipForward() {
+    @discardableResult
+    func skipForward() -> Double {
         let target = min(engine.currentTimeSec + Self.skipForwardSec, engine.durationSec)
         engine.seek(toSec: target)
+        return target
     }
 
-    func skipBackward() {
+    @discardableResult
+    func skipBackward() -> Double {
         let target = max(engine.currentTimeSec - Self.skipBackwardSec, 0)
         engine.seek(toSec: target)
+        return target
     }
 
     private func handlePlaybackEnded() {

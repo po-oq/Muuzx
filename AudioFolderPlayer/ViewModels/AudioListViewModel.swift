@@ -105,20 +105,18 @@ final class AudioListViewModel: ObservableObject {
     }
 
     func skipForward() {
-        playback.skipForward()
-        refreshPlaybackState()
+        refreshPlaybackState(positionSec: playback.skipForward())
     }
 
     func skipBackward() {
-        playback.skipBackward()
-        refreshPlaybackState()
+        refreshPlaybackState(positionSec: playback.skipBackward())
     }
 
-    func refreshPlaybackState() {
+    func refreshPlaybackState(positionSec: Double? = nil) {
         guard let currentItemId else { return }
         updatePlaybackState(
             for: currentItemId,
-            positionSec: playback.currentPositionSec,
+            positionSec: positionSec ?? playback.currentPositionSec,
             durationSec: playback.currentDurationSec
         )
         playback.setItems(items)
@@ -146,10 +144,6 @@ final class AudioListViewModel: ObservableObject {
 
     var currentItem: AudioItem? {
         items.first { $0.id == currentItemId }
-    }
-
-    var currentPlaybackPositionSec: Double {
-        currentItemId == nil ? 0 : playback.currentPositionSec
     }
 
     private func updateCurrentItem(_ item: AudioItem?, reason: PlaybackItemChangeReason) {

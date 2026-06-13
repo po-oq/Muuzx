@@ -66,10 +66,30 @@ final class AudioFolderPlayerUITests: XCTestCase {
             displayedSeconds(currentTime.label),
             "Expected parseable current time before skip, but was \(currentTime.label)"
         )
-        app.buttons["skip-backward-button"].tap()
+        let skipBackwardButton = app.buttons["skip-backward-button"]
+        let skipForwardButton = app.buttons["skip-forward-button"]
         XCTAssertTrue(
-            waitForDisplayedSeconds(currentTime, lessThan: positionBeforeSkip),
+            skipBackwardButton.waitForExistence(timeout: 2),
+            "Expected skip-backward control to exist"
+        )
+        XCTAssertTrue(
+            skipForwardButton.waitForExistence(timeout: 2),
+            "Expected skip-forward control to exist"
+        )
+
+        skipBackwardButton.tap()
+        XCTAssertTrue(
+            waitForDisplayedSeconds(currentTime) { $0 < positionBeforeSkip },
             "Expected skip-backward to reduce current time below \(positionBeforeSkip)s, but was \(currentTime.label)"
+        )
+        let positionAfterBackward = try XCTUnwrap(
+            displayedSeconds(currentTime.label),
+            "Expected parseable current time after skip-backward, but was \(currentTime.label)"
+        )
+        skipForwardButton.tap()
+        XCTAssertTrue(
+            waitForDisplayedSeconds(currentTime) { $0 > positionAfterBackward },
+            "Expected skip-forward to increase current time beyond \(positionAfterBackward)s or reach its duration clamp, but was \(currentTime.label)"
         )
 
         playPauseButton.tap()
@@ -105,7 +125,7 @@ final class AudioFolderPlayerUITests: XCTestCase {
 
     private func waitForDisplayedSeconds(
         _ element: XCUIElement,
-        lessThan initialSeconds: Int,
+        satisfies condition: @escaping (Int) -> Bool,
         timeout: TimeInterval = 2
     ) -> Bool {
         wait(
@@ -114,7 +134,7 @@ final class AudioFolderPlayerUITests: XCTestCase {
                 guard let element = object as? XCUIElement,
                       let seconds = self.displayedSeconds(element.label)
                 else { return false }
-                return seconds < initialSeconds
+                return condition(seconds)
             },
             timeout: timeout
         )

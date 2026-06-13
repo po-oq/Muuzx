@@ -18,7 +18,7 @@ struct MiniPlayerView: View {
                 .accessibilityIdentifier("mini-player-progress")
 
             HStack {
-                Text(PlaybackDisplayFormatter.time(viewModel.currentPlaybackPositionSec))
+                Text(PlaybackDisplayFormatter.time(viewModel.currentItem?.positionSec ?? 0))
                     .accessibilityIdentifier("mini-player-current-time")
                 Spacer()
                 Text(PlaybackDisplayFormatter.time(viewModel.currentItem?.durationSec ?? 0))
