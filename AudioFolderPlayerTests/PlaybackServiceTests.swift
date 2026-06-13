@@ -123,6 +123,17 @@ final class PlaybackServiceTests: XCTestCase {
         XCTAssertEqual(engine.seekedToSec.last, 100)
     }
 
+    func test_skipForward_preservesPositiveTargetWhenDurationIsUnknown() {
+        let engine = FakeAudioEngine()
+        engine.currentTimeSec = 10
+        engine.durationSec = 0
+        let service = PlaybackService(engine: engine, items: [makeItem("a.mp3", durationSec: 0)])
+
+        service.skipForward()
+
+        XCTAssertEqual(engine.seekedToSec.last, 40)
+    }
+
     func test_skipBackward_rewinds10Seconds() {
         let engine = FakeAudioEngine()
         engine.currentTimeSec = 50

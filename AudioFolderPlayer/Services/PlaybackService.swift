@@ -79,7 +79,8 @@ final class PlaybackService {
 
     @discardableResult
     func skipForward() -> Double {
-        let target = min(engine.currentTimeSec + Self.skipForwardSec, engine.durationSec)
+        let position = max(engine.currentTimeSec + Self.skipForwardSec, 0)
+        let target = engine.durationSec > 0 ? min(position, engine.durationSec) : position
         engine.seek(toSec: target)
         return target
     }

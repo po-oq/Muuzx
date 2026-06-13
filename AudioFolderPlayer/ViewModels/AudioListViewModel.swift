@@ -170,18 +170,32 @@ final class AudioListViewModel: ObservableObject {
 
     private func updatePlaybackState(for id: String, positionSec: Double, durationSec: Double) {
         guard let index = items.firstIndex(where: { $0.id == id }) else { return }
-        let duration = durationSec > 0 ? durationSec : items[index].durationSec
+        items[index] = normalizedPlaybackItem(
+            items[index],
+            positionSec: positionSec,
+            durationSec: durationSec
+        )
+    }
+
+    private func normalizedPlaybackItem(
+        _ item: AudioItem,
+        positionSec: Double,
+        durationSec: Double
+    ) -> AudioItem {
+        var item = item
+        let duration = durationSec > 0 ? durationSec : item.durationSec
         let position = duration > 0 ? min(max(positionSec, 0), duration) : max(positionSec, 0)
 
-        items[index].durationSec = duration
+        item.durationSec = duration
         if duration > 0, position > 0, position >= duration - 30 {
-            items[index].positionSec = duration
-            items[index].status = .played
+            item.positionSec = duration
+            item.status = .played
         } else {
-            items[index].positionSec = position
-            items[index].status = position > 0 ? .inProgress : .unplayed
+            item.positionSec = position
+            item.status = position > 0 ? .inProgress : .unplayed
         }
-        items[index].updatedAt = Date()
+        item.updatedAt = Date()
+        return item
     }
 
     private func handleItemCompleted(
@@ -215,7 +229,19 @@ final class AudioListViewModel: ObservableObject {
                           let index = self.items.firstIndex(where: { $0.id == item.id })
                     else { return }
 
-                    self.items[index].durationSec = duration
+                    var updated = self.items[index]
+                    if updated.status == .played {
+                        updated.durationSec = duration
+                        updated.positionSec = duration
+                        updated.updatedAt = Date()
+                    } else {
+                        updated = self.normalizedPlaybackItem(
+                            updated,
+                            positionSec: updated.positionSec,
+                            durationSec: duration
+                        )
+                    }
+                    self.items[index] = updated
                     self.playback.setItems(self.items)
                 } catch is CancellationError {
                     self?.onMetadataCancellationProcessed?()

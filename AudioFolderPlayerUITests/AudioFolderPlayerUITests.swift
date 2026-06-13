@@ -33,24 +33,44 @@ final class AudioFolderPlayerUITests: XCTestCase {
         let markUnplayedButton = app.buttons["未再生に戻す"]
         XCTAssertTrue(playFromBeginningButton.waitForExistence(timeout: 2))
         XCTAssertTrue(markUnplayedButton.waitForExistence(timeout: 2))
-        app.tap()
-        XCTAssertTrue(playFromBeginningButton.waitForNonExistence(timeout: 2))
-
-        firstSample.tap()
+        playFromBeginningButton.tap()
 
         XCTAssertTrue(app.images["current-item-speaker"].waitForExistence(timeout: 2))
         XCTAssertTrue(
             waitForLabel(firstSampleStatus, toEqual: "再生中"),
-            "Expected sample-01 badge to become 再生中, but was \(firstSampleStatus.label)"
+            "Expected 先頭から再生 to make sample-01 再生中, but was \(firstSampleStatus.label)"
         )
         let miniPlayerTitle = app.staticTexts["mini-player-title"]
         XCTAssertTrue(
             waitForLabel(miniPlayerTitle, toEqual: "sample-01.mp3"),
-            "Expected mini-player title to be sample-01.mp3, but was \(miniPlayerTitle.label)"
+            "Expected 先頭から再生 to select sample-01.mp3, but was \(miniPlayerTitle.label)"
         )
 
         let playPauseButton = app.buttons["play-pause-button"]
         XCTAssertTrue(playPauseButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "再生中"),
+            "Expected 先頭から再生 to start playback, but was \(String(describing: playPauseButton.value))"
+        )
+
+        firstSample.press(forDuration: 1.2)
+        XCTAssertTrue(markUnplayedButton.waitForExistence(timeout: 2))
+        markUnplayedButton.tap()
+        XCTAssertTrue(
+            app.images["current-item-speaker"].waitForNonExistence(timeout: 2),
+            "Expected 未再生に戻す to stop the current item"
+        )
+        XCTAssertTrue(
+            waitForLabel(firstSampleStatus, toEqual: "未再生"),
+            "Expected 未再生に戻す to reset sample-01 badge, but was \(firstSampleStatus.label)"
+        )
+
+        firstSample.tap()
+        XCTAssertTrue(playPauseButton.waitForExistence(timeout: 2))
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "再生中"),
+            "Expected tapping sample-01 after reset to replay it, but was \(String(describing: playPauseButton.value))"
+        )
         playPauseButton.tap()
         XCTAssertTrue(
             waitForValue(playPauseButton, toEqual: "一時停止中"),

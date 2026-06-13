@@ -21,13 +21,15 @@ struct AudioFileRow: View {
                 .font(.caption)
                 .foregroundStyle(.secondary)
 
-                ProgressView(value: PlaybackDisplayFormatter.progress(
-                    position: item.positionSec,
-                    duration: item.durationSec
-                ))
-                .progressViewStyle(.linear)
-                .tint(.blue)
-                .frame(height: 3)
+                if item.durationSec.isFinite, item.durationSec > 0 {
+                    ProgressView(value: PlaybackDisplayFormatter.progress(
+                        position: item.positionSec,
+                        duration: item.durationSec
+                    ))
+                    .progressViewStyle(.linear)
+                    .tint(.blue)
+                    .frame(height: 3)
+                }
             }
 
             Spacer(minLength: 8)
