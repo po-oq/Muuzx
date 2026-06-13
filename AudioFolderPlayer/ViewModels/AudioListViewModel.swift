@@ -148,6 +148,10 @@ final class AudioListViewModel: ObservableObject {
         items.first { $0.id == currentItemId }
     }
 
+    var currentPlaybackPositionSec: Double {
+        currentItemId == nil ? 0 : playback.currentPositionSec
+    }
+
     private func updateCurrentItem(_ item: AudioItem?, reason: PlaybackItemChangeReason) {
         currentItemId = item?.id
         isPlaying = item != nil

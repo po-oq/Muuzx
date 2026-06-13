@@ -19,9 +19,13 @@ final class AudioFolderPlayerUITests: XCTestCase {
 
         let firstSample = app.buttons["audio-row-sample-01.mp3"]
         let secondSample = app.buttons["audio-row-sample-02.mp3"]
+        let firstSampleStatus = app.staticTexts["audio-status-sample-01.mp3"]
         XCTAssertTrue(firstSample.waitForExistence(timeout: 5))
         XCTAssertTrue(secondSample.waitForExistence(timeout: 2))
-        XCTAssertTrue(app.staticTexts["audio-status-sample-01.mp3"].waitForExistence(timeout: 2))
+        XCTAssertTrue(
+            waitForLabel(firstSampleStatus, toEqual: "未再生"),
+            "Expected sample-01 badge to initially be 未再生, but was \(firstSampleStatus.label)"
+        )
         XCTAssertTrue(app.progressIndicators["mini-player-progress"].waitForExistence(timeout: 2))
 
         firstSample.press(forDuration: 1.2)
@@ -35,29 +39,99 @@ final class AudioFolderPlayerUITests: XCTestCase {
         firstSample.tap()
 
         XCTAssertTrue(app.images["current-item-speaker"].waitForExistence(timeout: 2))
-        let firstSampleStatus = app.staticTexts["audio-status-sample-01.mp3"]
-        let playingStatus = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "label == %@", "再生中"),
-            object: firstSampleStatus
-        )
         XCTAssertTrue(
-            XCTWaiter.wait(for: [playingStatus], timeout: 2) == .completed
+            waitForLabel(firstSampleStatus, toEqual: "再生中"),
+            "Expected sample-01 badge to become 再生中, but was \(firstSampleStatus.label)"
         )
         let miniPlayerTitle = app.staticTexts["mini-player-title"]
-        let expectedMiniPlayerTitle = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "label == %@", "sample-01.mp3"),
-            object: miniPlayerTitle
-        )
         XCTAssertTrue(
-            XCTWaiter.wait(for: [expectedMiniPlayerTitle], timeout: 2) == .completed
+            waitForLabel(miniPlayerTitle, toEqual: "sample-01.mp3"),
+            "Expected mini-player title to be sample-01.mp3, but was \(miniPlayerTitle.label)"
         )
 
         let playPauseButton = app.buttons["play-pause-button"]
         XCTAssertTrue(playPauseButton.waitForExistence(timeout: 2))
         playPauseButton.tap()
-        playPauseButton.tap()
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "一時停止中"),
+            "Expected play/pause control to expose 一時停止中 after pausing, but was \(String(describing: playPauseButton.value))"
+        )
 
+        let currentTime = app.staticTexts["mini-player-current-time"]
+        XCTAssertTrue(
+            currentTime.waitForExistence(timeout: 2),
+            "Expected mini-player current time to exist after pausing"
+        )
+        let positionBeforeSkip = try XCTUnwrap(
+            displayedSeconds(currentTime.label),
+            "Expected parseable current time before skip, but was \(currentTime.label)"
+        )
         app.buttons["skip-backward-button"].tap()
-        app.buttons["skip-forward-button"].tap()
+        XCTAssertTrue(
+            waitForDisplayedSeconds(currentTime, lessThan: positionBeforeSkip),
+            "Expected skip-backward to reduce current time below \(positionBeforeSkip)s, but was \(currentTime.label)"
+        )
+
+        playPauseButton.tap()
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "再生中"),
+            "Expected play/pause control to expose 再生中 after resuming, but was \(String(describing: playPauseButton.value))"
+        )
+    }
+
+    private func waitForLabel(
+        _ element: XCUIElement,
+        toEqual expectedLabel: String,
+        timeout: TimeInterval = 2
+    ) -> Bool {
+        wait(
+            for: element,
+            predicate: NSPredicate(format: "label == %@", expectedLabel),
+            timeout: timeout
+        )
+    }
+
+    private func waitForValue(
+        _ element: XCUIElement,
+        toEqual expectedValue: String,
+        timeout: TimeInterval = 2
+    ) -> Bool {
+        wait(
+            for: element,
+            predicate: NSPredicate(format: "value == %@", expectedValue),
+            timeout: timeout
+        )
+    }
+
+    private func waitForDisplayedSeconds(
+        _ element: XCUIElement,
+        lessThan initialSeconds: Int,
+        timeout: TimeInterval = 2
+    ) -> Bool {
+        wait(
+            for: element,
+            predicate: NSPredicate { object, _ in
+                guard let element = object as? XCUIElement,
+                      let seconds = self.displayedSeconds(element.label)
+                else { return false }
+                return seconds < initialSeconds
+            },
+            timeout: timeout
+        )
+    }
+
+    private func wait(
+        for element: XCUIElement,
+        predicate: NSPredicate,
+        timeout: TimeInterval
+    ) -> Bool {
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: element)
+        return XCTWaiter.wait(for: [expectation], timeout: timeout) == .completed
+    }
+
+    private func displayedSeconds(_ value: String) -> Int? {
+        let components = value.split(separator: ":").compactMap { Int($0) }
+        guard components.count == 2 else { return nil }
+        return components[0] * 60 + components[1]
     }
 }

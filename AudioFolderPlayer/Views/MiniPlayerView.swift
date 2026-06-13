@@ -18,7 +18,8 @@ struct MiniPlayerView: View {
                 .accessibilityIdentifier("mini-player-progress")
 
             HStack {
-                Text(PlaybackDisplayFormatter.time(viewModel.currentItem?.positionSec ?? 0))
+                Text(PlaybackDisplayFormatter.time(viewModel.currentPlaybackPositionSec))
+                    .accessibilityIdentifier("mini-player-current-time")
                 Spacer()
                 Text(PlaybackDisplayFormatter.time(viewModel.currentItem?.durationSec ?? 0))
             }
@@ -38,6 +39,7 @@ struct MiniPlayerView: View {
                         .frame(width: 44, height: 44)
                 }
                 .accessibilityIdentifier("play-pause-button")
+                .accessibilityValue(viewModel.isPlaying ? "再生中" : "一時停止中")
 
                 Button(action: viewModel.skipForward) {
                     Image(systemName: "goforward.30")
