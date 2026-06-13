@@ -1203,7 +1203,7 @@ iPhone 16 / iOS 18.4 シミュレータで一覧を開き、`docs/ui-mock.html` 
 
 ## Task 7 Final Result
 
-- Full tests: PASS。`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData` を fresh 実行し、unit 81 件 + UI 1 件、合計 82 件、0 failures、`** TEST SUCCEEDED **`。
+- Full tests: PASS。`xcodebuild test -scheme AudioFolderPlayer -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.4' -derivedDataPath /private/tmp/AudioFolderPlayerDerivedData` を fresh 実行し、unit 87 件 + UI 1 件、合計 88 件、0 failures、`** TEST SUCCEEDED **`。
 - Visual smoke: PASS。`docs/ui-mock.html` と SwiftUI 構造を照合し、淡い grouped background、角丸一覧、セクションラベル、状態バッジ優先、一覧/ミニプレイヤーの細い進捗、下部固定プレイヤーを確認。UI smoke で一覧行・状態バッジ・進捗・全操作が存在し操作可能であることを確認した。テスト runner 終了後に一覧画面の専用スクリーンショットは保持できなかった。
 - Playback state smoke: PASS。UI smoke で未再生表示、通常タップ、再生中バッジ、長押しメニュー、pause/resume、10 秒戻し、30 秒送りの表示反映を確認。unit tests で途中再開、先頭再生、未再生化、残り 30 秒判定、完了、自動次項目、一覧再入場時の観測再開、同一 `fileId` のメモリ状態引継ぎを確認。永続化コードを追加しておらず、アプリ再起動後に復元しない Step 4 境界を維持。
 - Dynamic Type smoke: PASS。`xcrun simctl ui 89914295-F8B7-4CC6-8D95-BFFDD6934B33 content_size accessibility-extra-large` で focused UI smoke を完走し、一覧行、状態バッジ、長押しメニュー、ミニプレイヤー、全操作が存在・操作可能であることを確認。終了後 `large` へ復元済み。
