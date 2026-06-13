@@ -109,6 +109,70 @@ final class AudioListViewModelTests: XCTestCase {
         _ = cancellable
     }
 
+    func test_load_whenDurationArrivesImmediatelyAfterPlay_preservesCurrentItemInProgress() async throws {
+        let metadata = ControllableAudioMetadataLoader()
+        let (viewModel, _) = try makeViewModel(metadata: metadata)
+        let request = await metadata.waitForRequest(at: 0)
+        viewModel.play(try XCTUnwrap(viewModel.items.first))
+        let durationUpdated = expectation(description: "duration updated")
+        let cancellable = viewModel.$items.dropFirst().sink { items in
+            if items.first?.durationSec == 100 {
+                durationUpdated.fulfill()
+            }
+        }
+
+        await metadata.complete(request, with: 100)
+        await fulfillment(of: [durationUpdated], timeout: 1)
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+        XCTAssertTrue(viewModel.isPlaying)
+        _ = cancellable
+    }
+
+    func test_load_whenDurationArrivesImmediatelyAfterPlayFromBeginning_preservesCurrentItemInProgress() async throws {
+        let metadata = ControllableAudioMetadataLoader()
+        let (viewModel, _) = try makeViewModel(metadata: metadata)
+        let request = await metadata.waitForRequest(at: 0)
+        viewModel.playFromBeginning(try XCTUnwrap(viewModel.items.first))
+        let durationUpdated = expectation(description: "duration updated")
+        let cancellable = viewModel.$items.dropFirst().sink { items in
+            if items.first?.durationSec == 100 {
+                durationUpdated.fulfill()
+            }
+        }
+
+        await metadata.complete(request, with: 100)
+        await fulfillment(of: [durationUpdated], timeout: 1)
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .inProgress)
+        XCTAssertTrue(viewModel.isPlaying)
+        _ = cancellable
+    }
+
+    func test_load_whenDurationArrivesAfterPausingAtZero_marksCurrentItemUnplayed() async throws {
+        let metadata = ControllableAudioMetadataLoader()
+        let (viewModel, _) = try makeViewModel(metadata: metadata)
+        let request = await metadata.waitForRequest(at: 0)
+        viewModel.play(try XCTUnwrap(viewModel.items.first))
+        viewModel.togglePlayPause()
+        let durationUpdated = expectation(description: "duration updated")
+        let cancellable = viewModel.$items.dropFirst().sink { items in
+            if items.first?.durationSec == 100 {
+                durationUpdated.fulfill()
+            }
+        }
+
+        await metadata.complete(request, with: 100)
+        await fulfillment(of: [durationUpdated], timeout: 1)
+
+        XCTAssertEqual(viewModel.currentItem?.positionSec, 0)
+        XCTAssertEqual(viewModel.currentItem?.status, .unplayed)
+        XCTAssertFalse(viewModel.isPlaying)
+        _ = cancellable
+    }
+
     func test_load_whenDurationArrivesForPlayedItem_setsPositionToDuration() async throws {
         let metadata = ControllableAudioMetadataLoader()
         let (viewModel, engine) = try makeViewModel(metadata: metadata)

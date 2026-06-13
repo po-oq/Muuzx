@@ -173,14 +173,16 @@ final class AudioListViewModel: ObservableObject {
         items[index] = normalizedPlaybackItem(
             items[index],
             positionSec: positionSec,
-            durationSec: durationSec
+            durationSec: durationSec,
+            preserveInProgressAtZero: id == currentItemId && isPlaying
         )
     }
 
     private func normalizedPlaybackItem(
         _ item: AudioItem,
         positionSec: Double,
-        durationSec: Double
+        durationSec: Double,
+        preserveInProgressAtZero: Bool = false
     ) -> AudioItem {
         var item = item
         let duration = durationSec > 0 ? durationSec : item.durationSec
@@ -192,7 +194,9 @@ final class AudioListViewModel: ObservableObject {
             item.status = .played
         } else {
             item.positionSec = position
-            item.status = position > 0 ? .inProgress : .unplayed
+            item.status = position > 0 || (preserveInProgressAtZero && item.status == .inProgress)
+                ? .inProgress
+                : .unplayed
         }
         item.updatedAt = Date()
         return item
@@ -238,7 +242,8 @@ final class AudioListViewModel: ObservableObject {
                         updated = self.normalizedPlaybackItem(
                             updated,
                             positionSec: updated.positionSec,
-                            durationSec: duration
+                            durationSec: duration,
+                            preserveInProgressAtZero: item.id == self.currentItemId && self.isPlaying
                         )
                     }
                     self.items[index] = updated
