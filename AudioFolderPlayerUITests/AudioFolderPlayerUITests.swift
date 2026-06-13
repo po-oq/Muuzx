@@ -56,6 +56,16 @@ final class AudioFolderPlayerUITests: XCTestCase {
             waitForValue(playPauseButton, toEqual: "一時停止中"),
             "Expected play/pause control to expose 一時停止中 after pausing, but was \(String(describing: playPauseButton.value))"
         )
+        playPauseButton.tap()
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "再生中"),
+            "Expected play/pause control to expose 再生中 after resuming, but was \(String(describing: playPauseButton.value))"
+        )
+        playPauseButton.tap()
+        XCTAssertTrue(
+            waitForValue(playPauseButton, toEqual: "一時停止中"),
+            "Expected play/pause control to expose 一時停止中 before skipping, but was \(String(describing: playPauseButton.value))"
+        )
 
         let currentTime = app.staticTexts["mini-player-current-time"]
         XCTAssertTrue(
@@ -90,12 +100,6 @@ final class AudioFolderPlayerUITests: XCTestCase {
         XCTAssertTrue(
             waitForDisplayedSeconds(currentTime) { $0 > positionAfterBackward },
             "Expected skip-forward to increase current time beyond \(positionAfterBackward)s or reach its duration clamp, but was \(currentTime.label)"
-        )
-
-        playPauseButton.tap()
-        XCTAssertTrue(
-            waitForValue(playPauseButton, toEqual: "再生中"),
-            "Expected play/pause control to expose 再生中 after resuming, but was \(String(describing: playPauseButton.value))"
         )
     }
 
