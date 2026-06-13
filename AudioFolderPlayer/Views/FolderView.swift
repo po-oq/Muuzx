@@ -36,7 +36,10 @@ struct FolderView: View {
                 Text(folderViewModel.errorMessage ?? "")
             }
             .navigationDestination(isPresented: $isShowingAudioList) {
-                AudioListView(viewModel: audioListViewModel)
+                AudioListView(
+                    viewModel: audioListViewModel,
+                    folderName: folderViewModel.summary?.folderName
+                )
             }
             .onAppear {
                 audioListViewModel.load()

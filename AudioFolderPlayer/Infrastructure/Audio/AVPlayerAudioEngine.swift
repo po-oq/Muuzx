@@ -1,5 +1,6 @@
 import AVFoundation
 
+@MainActor
 final class AVPlayerAudioEngine: AudioEngine {
     private let player = AVPlayer()
     var onPlaybackEnded: (() -> Void)?
@@ -36,8 +37,18 @@ final class AVPlayerAudioEngine: AudioEngine {
         player.seek(to: CMTime(seconds: seconds, preferredTimescale: 600))
     }
 
-    @objc private func didPlayToEnd(_ note: Notification) {
-        guard (note.object as? AVPlayerItem) === player.currentItem else { return }
+    @objc nonisolated private func didPlayToEnd(_ note: Notification) {
+        guard let endedItem = note.object as? AVPlayerItem else { return }
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            if endedItem === self.player.currentItem {
+                self.notifyPlaybackEndedIfCurrent(endedItem)
+            }
+        }
+    }
+
+    private func notifyPlaybackEndedIfCurrent(_ endedItem: AVPlayerItem) {
+        guard endedItem === player.currentItem else { return }
         onPlaybackEnded?()
     }
 }

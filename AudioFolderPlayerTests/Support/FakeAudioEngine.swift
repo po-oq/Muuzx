@@ -1,6 +1,7 @@
 import Foundation
 @testable import AudioFolderPlayer
 
+@MainActor
 final class FakeAudioEngine: AudioEngine {
     var currentTimeSec: Double = 0
     var durationSec: Double = 0

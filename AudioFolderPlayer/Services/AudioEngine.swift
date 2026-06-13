@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 protocol AudioEngine: AnyObject {
     var currentTimeSec: Double { get }
     var durationSec: Double { get }

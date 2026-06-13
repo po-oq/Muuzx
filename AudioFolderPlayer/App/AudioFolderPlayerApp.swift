@@ -21,7 +21,11 @@ struct AudioFolderPlayerApp: App {
 
         let library = LocalAudioLibrary(directory: audioDir)
         let playback = PlaybackService(engine: AVPlayerAudioEngine())
-        let audioListViewModel = AudioListViewModel(library: library, playback: playback)
+        let audioListViewModel = AudioListViewModel(
+            library: library,
+            playback: playback,
+            metadata: AudioMetadataService()
+        )
 
         let summaryStore = FolderImportSummaryStore(
             fileURL: stateDir.appendingPathComponent("folder-import-summary.json")
